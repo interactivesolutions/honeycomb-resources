@@ -24,10 +24,10 @@ class HCResourcesServiceProvider extends ServiceProvider
         $this->commands ($this->commands);
 
         // loading views
-        $this->loadViewsFrom (__DIR__ . '/../resources/views', 'HCResources');
+        $this->loadViewsFrom (__DIR__ . '/../../resources/views', 'HCResources');
 
         // loading translations
-        $this->loadTranslationsFrom (__DIR__ . '/../resources/lang', 'HCResources');
+        $this->loadTranslationsFrom (__DIR__ . '/../../resources/lang', 'HCResources');
 
         // registering elements to publish
         $this->registerPublishElements ();
