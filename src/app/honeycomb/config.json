@@ -1,39 +1,63 @@
 {
-    "general": {
-        "serviceProviderNameSpace": "HCResources"
-    },
-    "formData": {
-        "resources": "interactivesolutions\\honeycombresources\\forms\\HCResourcesForm"
-    },
-    "adminMenu": [
+  "general": {
+    "serviceProviderNameSpace": "HCResources"
+  },
+  "formData": {
+    "resources": "interactivesolutions\\honeycombresources\\forms\\HCResourcesForm",
+    "resources-thumbs": "interactivesolutions\\honeycombresources\\forms\\resources\\HCThumbsForm"
+  },
+  "adminMenu": [
+    {
+      "path": "admin\/resources",
+      "translation": "HCResources::resources.page_title",
+      "icon": "file-image-o",
+      "aclPermission": "interactivesolutions_honeycomb_resources_resources_list",
+      "children": [
         {
-            "path": "admin\/resources",
-            "translation": "HCResources::resources.page_title",
-            "icon": "file-image-o",
-            "aclPermission": "interactivesolutions_honeycomb_resources_resources_list"
+          "path": "admin\/resources\/thumbs",
+          "translation": "HCResources::resources_thumbs.page_title",
+          "icon": "fa-cogs",
+          "aclPermission": "interactivesolutions_honeycomb_resources_resources_thumbs_list"
         }
-    ],
-    "acl": {
-        "permissions": [
-            {
-                "name": "admin.resources",
-                "controller": "interactivesolutions\\honeycombresources\\http\\controllers\\HCResourcesController",
-                "actions": [
-                    "interactivesolutions_honeycomb_resources_resources_list",
-                    "interactivesolutions_honeycomb_resources_resources_create",
-                    "interactivesolutions_honeycomb_resources_resources_update",
-                    "interactivesolutions_honeycomb_resources_resources_delete",
-                    "interactivesolutions_honeycomb_resources_resources_force_delete"
-                ]
-            }
-        ],
-        "rolesActions": {
-            "project-admin": [
-                "interactivesolutions_honeycomb_resources_resources_list",
-                "interactivesolutions_honeycomb_resources_resources_create",
-                "interactivesolutions_honeycomb_resources_resources_update",
-                "interactivesolutions_honeycomb_resources_resources_delete"
-            ]
-        }
+      ]
     }
+  ],
+  "acl": {
+    "permissions": [
+      {
+        "name": "admin.resources",
+        "controller": "interactivesolutions\\honeycombresources\\http\\controllers\\HCResourcesController",
+        "actions": [
+          "interactivesolutions_honeycomb_resources_resources_list",
+          "interactivesolutions_honeycomb_resources_resources_create",
+          "interactivesolutions_honeycomb_resources_resources_update",
+          "interactivesolutions_honeycomb_resources_resources_delete",
+          "interactivesolutions_honeycomb_resources_resources_force_delete"
+        ]
+      },
+      {
+        "name": "admin.resources.thumbs",
+        "controller": "interactivesolutions\\honeycombresources\\http\\controllers\\resources\\HCThumbsController",
+        "actions": [
+          "interactivesolutions_honeycomb_resources_resources_thumbs_list",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_create",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_update",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_delete",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_force_delete"
+        ]
+      }
+    ],
+    "rolesActions": {
+      "project-admin": [
+        "interactivesolutions_honeycomb_resources_resources_list",
+        "interactivesolutions_honeycomb_resources_resources_create",
+        "interactivesolutions_honeycomb_resources_resources_update",
+        "interactivesolutions_honeycomb_resources_resources_delete",
+        "interactivesolutions_honeycomb_resources_resources_thumbs_list",
+        "interactivesolutions_honeycomb_resources_resources_thumbs_create",
+        "interactivesolutions_honeycomb_resources_resources_thumbs_update",
+        "interactivesolutions_honeycomb_resources_resources_thumbs_delete"
+      ]
+    }
+  }
 }
