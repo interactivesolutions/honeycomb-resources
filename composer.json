@@ -11,7 +11,7 @@
     },
     "autoload": {
         "psr-4": {
-            "interactivesolutions\honeycombresources\": "src/"
+            "interactivesolutions\\honeycombresources\\": "src/"
         }
     },
     "minimum-stability": "dev"
