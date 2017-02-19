@@ -16,16 +16,49 @@ class HCThumbsForm
      * @param bool $edit
      * @return array
      */
+    public function createForm ($edit = false)
     {
         $form = [
+            'storageURL' => route ('admin.api.resources.thumbs'),
             'buttons'    => [
                 [
                     "class" => "col-centered",
+                    "label" => trans ('HCCoreUI::core.button.submit'),
                     "type"  => "submit",
                 ],
             ],
             'structure'  => [
                 [
+                    "type"            => "singleLine",
+                    "fieldID"         => "name",
+                    "label"           => trans ("HCResources::resources_thumbs.name"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "width",
+                    "label"           => trans ("HCResources::resources_thumbs.width"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "height",
+                    "label"           => trans ("HCResources::resources_thumbs.height"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "fit",
+                    "label"           => trans ("HCResources::resources_thumbs.fit"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "aspect_ratio",
+                    "label"           => trans ("HCResources::resources_thumbs.aspect_ratio"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                ],
             ],
         ];
 
