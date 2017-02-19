@@ -1,5 +1,4 @@
 <?php
-//./packages/interactivesolutions/honeycomb-resources/src/app/routes/routes.resources.php
 
 Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
 {
@@ -21,4 +20,3 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
         Route::delete('resources/force', ['as' => 'admin.api.resources.force.multi', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_force_delete'], 'uses' => 'HCResourcesController@forceDelete']);
     });
 });
-

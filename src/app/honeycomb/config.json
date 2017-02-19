@@ -1,21 +1,39 @@
 {
-    "general":
-    {
+    "general": {
         "serviceProviderNameSpace": "HCResources"
     },
-    "formData":
-    [
+    "formData": {
+        "resources": "interactivesolutions\\honeycombresources\\forms\\HCResourcesForm"
+    },
+    "adminMenu": [
+        {
+            "path": "admin\/resources",
+            "translation": "HCResources::resources.page_title",
+            "icon": "file-image-o",
+            "aclPermission": "interactivesolutions_honeycomb_resources_resources_list"
+        }
     ],
-    "adminMenu":
-    [
-    ],
-    "acl":
-    {
-        "permissions" :
-        [
+    "acl": {
+        "permissions": [
+            {
+                "name": "admin.resources",
+                "controller": "interactivesolutions\\honeycombresources\\http\\controllers\\HCResourcesController",
+                "actions": [
+                    "interactivesolutions_honeycomb_resources_resources_list",
+                    "interactivesolutions_honeycomb_resources_resources_create",
+                    "interactivesolutions_honeycomb_resources_resources_update",
+                    "interactivesolutions_honeycomb_resources_resources_delete",
+                    "interactivesolutions_honeycomb_resources_resources_force_delete"
+                ]
+            }
         ],
-        "rolesActions" :
-        [
-        ]
+        "rolesActions": {
+            "project-admin": [
+                "interactivesolutions_honeycomb_resources_resources_list",
+                "interactivesolutions_honeycomb_resources_resources_create",
+                "interactivesolutions_honeycomb_resources_resources_update",
+                "interactivesolutions_honeycomb_resources_resources_delete"
+            ]
+        }
     }
 }
