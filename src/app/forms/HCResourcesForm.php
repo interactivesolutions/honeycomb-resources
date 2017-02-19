@@ -16,43 +16,43 @@ class HCResourcesForm
      * @param bool $edit
      * @return array
      */
-    public function createForm($edit = false)
+    public function createForm ($edit = false)
     {
         $form = [
-            'storageURL' => route('admin.api.resources'),
+            'storageURL' => route ('admin.api.resources'),
             'buttons'    => [
                 [
                     "class" => "col-centered",
-                    "label" => trans('HCCoreUI::core.button.submit'),
+                    "label" => trans ('HCCoreUI::core.button.submit'),
                     "type"  => "submit",
                 ],
             ],
             'structure'  => [
                 [
-    "type"            => "singleLine",
-    "fieldID"         => "original_name",
-    "label"           => trans("HCResources::resources.original_name"),
-    "required"        => 1,
-    "requiredVisible" => 1,
-],[
-    "type"            => "singleLine",
-    "fieldID"         => "safe_name",
-    "label"           => trans("HCResources::resources.safe_name"),
-    "required"        => 1,
-    "requiredVisible" => 1,
-],[
-    "type"            => "singleLine",
-    "fieldID"         => "size",
-    "label"           => trans("HCResources::resources.size"),
-    "required"        => 0,
-    "requiredVisible" => 0,
-],[
-    "type"            => "singleLine",
-    "fieldID"         => "path",
-    "label"           => trans("HCResources::resources.path"),
-    "required"        => 0,
-    "requiredVisible" => 0,
-],
+                    "type"            => "singleLine",
+                    "fieldID"         => "original_name",
+                    "label"           => trans ("HCResources::resources.original_name"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "safe_name",
+                    "label"           => trans ("HCResources::resources.safe_name"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "size",
+                    "label"           => trans ("HCResources::resources.size"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                ], [
+                    "type"            => "singleLine",
+                    "fieldID"         => "path",
+                    "label"           => trans ("HCResources::resources.path"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                ],
             ],
         ];
 
