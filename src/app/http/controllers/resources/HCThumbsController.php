@@ -19,7 +19,7 @@ class HCThumbsController extends HCBaseController
             'listURL'     => route ('admin.api.resources.thumbs'),
             'newFormUrl'  => route ('admin.api.form-manager', ['resources-thumbs-new']),
             'editFormUrl' => route ('admin.api.form-manager', ['resources-thumbs-edit']),
-            'imagesUrl'   => route ('resource.get', ['/']),
+        //    'imagesUrl'   => route ('resource.get', ['/']),
             'headers'     => $this->getAdminListHeader (),
         ];
 
@@ -149,7 +149,7 @@ class HCThumbsController extends HCBaseController
         $list = HCThumbs::with ($with)->select ($select)
             // add filters
             ->where (function ($query) use ($select) {
-                $query = where ($this->getRequestParameters ($query, $select));
+                $query = $this->getRequestParameters ($query, $select);
             });
 
         // enabling check for deleted
