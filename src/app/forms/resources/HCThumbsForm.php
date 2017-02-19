@@ -47,17 +47,19 @@ class HCThumbsForm
                     "required"        => 1,
                     "requiredVisible" => 1,
                 ], [
-                    "type"            => "singleLine",
+                    "type"            => "radioList",
                     "fieldID"         => "fit",
                     "label"           => trans ("HCResources::resources_thumbs.fit"),
                     "required"        => 0,
                     "requiredVisible" => 0,
+                    "options"         => formManagerYesNo()
                 ], [
-                    "type"            => "singleLine",
+                    "type"            => "radioList",
                     "fieldID"         => "aspect_ratio",
                     "label"           => trans ("HCResources::resources_thumbs.aspect_ratio"),
                     "required"        => 0,
                     "requiredVisible" => 0,
+                    "options"         => formManagerYesNo()
                 ],
             ],
         ];
