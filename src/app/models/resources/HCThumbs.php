@@ -18,6 +18,6 @@ class HCThumbs extends HCUuidModel
      *
      * @var array
      */
-    protected $fillable = ['id', 'name', 'active', 'width', 'height', 'fit', 'aspect_ratio'];
+    protected $fillable = ['id', 'name', 'global', 'width', 'height', 'fit'];
 
 }
