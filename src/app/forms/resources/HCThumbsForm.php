@@ -48,8 +48,7 @@ class HCThumbsForm
                     "requiredVisible" => 1,
                 ],
                 formManagerCheckBox ('fit', trans ("HCResources::resources_thumbs.fit")),
-                formManagerCheckBox ('aspect_ratio', trans ("HCResources::resources_thumbs.aspect_ratio")),
-                formManagerCheckBox ('active', trans ("HCResources::resources_thumbs.active"))
+                formManagerCheckBox ('global', trans ("HCResources::resources_thumbs.global"))
             ]
         ];
 
