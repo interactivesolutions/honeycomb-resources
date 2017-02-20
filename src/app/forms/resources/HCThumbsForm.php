@@ -47,14 +47,14 @@ class HCThumbsForm
                     "required"        => 1,
                     "requiredVisible" => 1,
                 ], [
-                    "type"            => "radioList",
+                    "type"            => "dropDownList",
                     "fieldID"         => "fit",
                     "label"           => trans ("HCResources::resources_thumbs.fit"),
                     "required"        => 0,
                     "requiredVisible" => 0,
                     "options"         => formManagerYesNo()
                 ], [
-                    "type"            => "radioList",
+                    "type"            => "dropDownList",
                     "fieldID"         => "aspect_ratio",
                     "label"           => trans ("HCResources::resources_thumbs.aspect_ratio"),
                     "required"        => 0,
