@@ -19,7 +19,6 @@ class CreateHcResourcesTable extends Migration
             $table->timestamps ();
             $table->softDeletes ();
             $table->string ('original_name');
-            $table->string ('safe_name');
             $table->integer ('size')->nullable ();
             $table->string ('path', 19)->nullable ();
         });
