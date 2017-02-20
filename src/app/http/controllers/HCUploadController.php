@@ -5,6 +5,7 @@ namespace interactivesolutions\honeycombresources\http\controllers;
 use DB;
 use HCLog;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use interactivesolutions\honeycombresources\models\HCResources;
 use Ramsey\Uuid\Uuid;
@@ -40,6 +41,8 @@ class HCUploadController
         try {
             $resource = $this->createResourceRecord ($file);
             $this->saveResourceInStorage ($resource, $file);
+
+            Artisan::call('hc:generate-thumbs', ['id' => $resource->id]);
         } catch (\Exception $e) {
             DB::rollback ();
 
@@ -83,7 +86,8 @@ class HCUploadController
 
         $params['id'] = Uuid::uuid4 ();
         $params['original_name'] = $file->getClientOriginalName ();
-        $params['path'] = $this->uploadPath . $params['id'] . '.' . $file->getClientOriginalExtension ();
+        $params['extension'] = '.' . $file->getClientOriginalExtension();
+        $params['path'] = $this->uploadPath . $params['id'] . $params['extension'];
         $params['size'] = $file->getClientSize ();
         $params['mime_type'] = $file->getClientMimeType();
 

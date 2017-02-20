@@ -3,6 +3,7 @@
 namespace interactivesolutions\honeycombresources\providers;
 
 use Illuminate\Support\ServiceProvider;
+use interactivesolutions\honeycombscripts\commands\HCGenerateThumbs;
 
 class HCResourcesServiceProvider extends ServiceProvider
 {
@@ -11,7 +12,9 @@ class HCResourcesServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $commands = [];
+    protected $commands = [
+        HCGenerateThumbs::class
+    ];
 
     protected $namespace = 'interactivesolutions\honeycombresources\http\controllers';
 
