@@ -85,6 +85,7 @@ class HCUploadController
         $params['original_name'] = $file->getClientOriginalName ();
         $params['path'] = $this->uploadPath . $params['id'] . '.' . $file->getClientOriginalExtension ();
         $params['size'] = $file->getClientSize ();
+        $params['mime_type'] = $file->getClientMimeType();
 
         return $params;
     }
