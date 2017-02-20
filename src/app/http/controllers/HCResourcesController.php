@@ -1,5 +1,6 @@
 <?php namespace interactivesolutions\honeycombresources\http\controllers;
 
+use interactivesolutions\honeycombcore\errors\facades\HCLog;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombresources\models\HCResources;
 use interactivesolutions\honeycombresources\validators\HCResourcesValidator;
@@ -76,12 +77,14 @@ class HCResourcesController extends HCBaseController
      */
     protected function __create ($data = null)
     {
-        if (is_null ($data))
-            $data = $this->getInputData ();
+        if (is_null ($data)) {
+            $resource = request ()->file ('file');
+        } else {
+            $resource = $data;
+        }
 
-        $record = HCResources::create (array_get ($data, 'record'));
-
-        return $this->getSingleRecord ($record->id);
+        $uploadController = new HCUploadController();
+        return $uploadController->upload ($resource);
     }
 
     /**
@@ -145,7 +148,7 @@ class HCResourcesController extends HCBaseController
         $list = HCResources::with ($with)->select ($select)
             // add filters
             ->where (function ($query) use ($select) {
-                $query = where ($this->getRequestParameters ($query, $select));
+                $query = $this->getRequestParameters ($query, $select);
             });
 
         // enabling check for deleted
@@ -218,5 +221,37 @@ class HCResourcesController extends HCBaseController
             ->firstOrFail ();
 
         return $record;
+    }
+
+    /**
+     * Show resource
+     *
+     * @param null $id
+     * @param null $width
+     * @param null $height
+     * @param null $fit
+     * @param string $returnType
+     * @return mixed
+     */
+    public function showResource ($id = null, $width = null, $height = null, $fit = null, $returnType = 'raw')
+    {
+        if (is_null ($id))
+            return HCLog::error ('R-001', trans ('resources::resources.errors.resource_not_found'));
+
+        $resource = HCResources::find($id);
+
+        if (!$resource)
+            return HCLog::error ('R-003', trans ('resources::resources.errors.resource_not_found'));
+
+        // Show resource
+        header('Pragma: public');
+        header('Cache-Control: max-age=86400');
+        header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+        header('Content-Length: ' . $resource->size);
+        header('Content-Disposition: inline;filename="' . $resource->original_name . '"');
+        header('Content-Type: ' . $resource->mime_type);
+        readfile(storage_path ('app/' . $resource->path));
+
+        exit;
     }
 }
