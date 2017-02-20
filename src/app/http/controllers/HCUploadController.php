@@ -83,7 +83,7 @@ class HCUploadController
 
         $params['id'] = Uuid::uuid4 ();
         $params['original_name'] = $file->getClientOriginalName ();
-        $params['path'] = $this->uploadPath;
+        $params['path'] = $this->uploadPath . $params['id'] . '.' . $file->getClientOriginalExtension ();
         $params['size'] = $file->getClientSize ();
 
         return $params;
