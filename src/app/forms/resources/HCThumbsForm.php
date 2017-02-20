@@ -46,22 +46,11 @@ class HCThumbsForm
                     "label"           => trans ("HCResources::resources_thumbs.height"),
                     "required"        => 1,
                     "requiredVisible" => 1,
-                ], [
-                    "type"            => "dropDownList",
-                    "fieldID"         => "fit",
-                    "label"           => trans ("HCResources::resources_thumbs.fit"),
-                    "required"        => 0,
-                    "requiredVisible" => 0,
-                    "options"         => formManagerYesNo()
-                ], [
-                    "type"            => "dropDownList",
-                    "fieldID"         => "aspect_ratio",
-                    "label"           => trans ("HCResources::resources_thumbs.aspect_ratio"),
-                    "required"        => 0,
-                    "requiredVisible" => 0,
-                    "options"         => formManagerYesNo()
                 ],
-            ],
+                formManagerCheckBox ('fit', trans ("HCResources::resources_thumbs.fit")),
+                formManagerCheckBox ('aspect_ratio', trans ("HCResources::resources_thumbs.aspect_ratio")),
+                formManagerCheckBox ('active', trans ("HCResources::resources_thumbs.active"))
+            ]
         ];
 
         if ($this->multiLanguage)

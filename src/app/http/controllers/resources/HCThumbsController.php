@@ -200,8 +200,9 @@ class HCThumbsController extends HCBaseController
         array_set ($data, 'record.name', array_get ($_data, 'name'));
         array_set ($data, 'record.width', array_get ($_data, 'width'));
         array_set ($data, 'record.height', array_get ($_data, 'height'));
-        array_set ($data, 'record.fit', array_get ($_data, 'fit'));
-        array_set ($data, 'record.aspect_ratio', array_get ($_data, 'aspect_ratio'));
+        array_set ($data, 'record.fit', array_get ($_data, 'fit.0'));
+        array_set ($data, 'record.aspect_ratio', array_get ($_data, 'aspect_ratio.0'));
+        array_set ($data, 'record.active', array_get ($_data, 'active.0'));
 
         return $data;
     }
