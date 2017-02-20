@@ -22,8 +22,7 @@ class CreateHcResourcesThumbsTable extends Migration {
 			$table->integer('width');
 			$table->integer('height');
 			$table->boolean('fit')->nullable();
-			$table->boolean('aspect_ratio')->nullable();
-			$table->boolean('active')->nullable();
+			$table->boolean('global')->nullable();
 		});
 	}
 

@@ -20,6 +20,7 @@ class CreateHcResourcesTable extends Migration
             $table->softDeletes ();
             $table->string ('original_name');
             $table->string ('mime_type', 100);
+            $table->string ('extension', 100);
             $table->integer ('size');
             $table->text ('path');
         });
