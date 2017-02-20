@@ -18,6 +18,6 @@ class HCResources extends HCUuidModel
      *
      * @var array
      */
-    protected $fillable = ['id', 'original_name', 'safe_name', 'size', 'path'];
+    protected $fillable = ['id', 'original_name', 'size', 'path'];
 
 }
