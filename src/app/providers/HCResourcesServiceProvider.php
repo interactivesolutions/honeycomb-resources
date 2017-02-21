@@ -4,6 +4,7 @@ namespace interactivesolutions\honeycombresources\providers;
 
 use Illuminate\Support\ServiceProvider;
 use interactivesolutions\honeycombscripts\commands\HCGenerateThumbs;
+use Intervention\Image\ImageServiceProvider;
 
 class HCResourcesServiceProvider extends ServiceProvider
 {
@@ -40,6 +41,8 @@ class HCResourcesServiceProvider extends ServiceProvider
 
         // registering routes
         $this->registerRoutes ();
+
+        $this->registerProviders();
     }
 
     /**
@@ -77,6 +80,14 @@ class HCResourcesServiceProvider extends ServiceProvider
         \Route::group (['namespace' => $this->namespace], function ($router) {
             require __DIR__ . '/../../app/honeycomb/routes.php';
         });
+    }
+
+    /**
+     * Registering external providers
+     */
+    private function registerProviders ()
+    {
+        $this->app->register(ImageServiceProvider::class);
     }
 }
 
