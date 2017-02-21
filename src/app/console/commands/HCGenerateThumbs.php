@@ -2,7 +2,7 @@
 
 namespace interactivesolutions\honeycombscripts\commands;
 
-use Image;
+use Intervention\Image\ImageManagerStatic as Image;
 use interactivesolutions\honeycombcore\commands\HCCommand;
 use interactivesolutions\honeycombresources\models\HCResources;
 use interactivesolutions\honeycombresources\models\resources\HCThumbs;
@@ -30,16 +30,15 @@ class HCGenerateThumbs extends HCCommand
      */
     public function handle ()
     {
-        $id = $this->argument('id');
+        $id = $this->argument ('id');
 
         if ($id)
-            $this->generateGlobalThumb($id);
-        else
-        {
-            $list = HCResources::all()->pluck('id');
+            $this->generateGlobalThumb ($id);
+        else {
+            $list = HCResources::all ()->pluck ('id');
 
             foreach ($list as $id)
-                $this->generateGlobalThumb($id);
+                $this->generateGlobalThumb ($id);
         }
     }
 
@@ -49,33 +48,35 @@ class HCGenerateThumbs extends HCCommand
      * @param $id
      * @throws \Exception
      */
-    private function generateGlobalThumb($id)
+    private function generateGlobalThumb ($id)
     {
-        $resource = HCResources::find($id);
+        $resource = HCResources::find ($id);
 
-        if (strpos($resource->mime_type, 'image' === false))
+        if (strpos ($resource->mime_type, 'image' === false))
             return;
 
         if (!$resource)
             throw new \Exception('Resource not found: ' . $id);
 
-        $thumbs_location = public_path('thumbs/' . $id) . '/';
-        $this->createDirectory($thumbs_location);
+        $thumbs_location = public_path ('thumbs/' . $id) . '/';
+        $this->createDirectory ($thumbs_location);
 
-        $thumbRules = HCThumbs::where('global', 1)->get();
+        $thumbRules = HCThumbs::where ('global', 1)->get ();
 
-        foreach ($thumbRules as $rule)
-        {
-            $img = Image::make(storage_path('app/') . $resource->path);
+        foreach ($thumbRules as $rule) {
+            $image = Image::make (storage_path ('app/') . $resource->path);
 
-            if ($rule->fit)
-                $img->fit($rule->width, $rule->height);
-            else
-                $img->resize($rule->width, $rule->height, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
+            if ($image->width () < $rule->width && $image->height () < $rule->height) {
+            } else {
+                if ($rule->fit)
+                    $image->fit ($rule->width, $rule->height);
+                else
+                    $image->resize ($rule->width, $rule->height, function ($constraint) {
+                        $constraint->aspectRatio ();
+                    });
+            }
 
-            $img->save($thumbs_location . $rule->width . '_' . $rule->height . $resource->extension, 100);
+            $image->save ($thumbs_location . $rule->width . '_' . $rule->height . $resource->extension, 100);
         }
     }
 }
