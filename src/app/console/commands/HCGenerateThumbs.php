@@ -58,12 +58,13 @@ class HCGenerateThumbs extends HCCommand
         if (!$resource)
             throw new \Exception('Resource not found: ' . $id);
 
-        $thumbs_location = public_path ('thumbs/' . $id) . '/';
-        $this->createDirectory ($thumbs_location);
-
         $thumbRules = HCThumbs::where ('global', 1)->get ();
 
         foreach ($thumbRules as $rule) {
+
+            $thumbs_location = 'thumbs/' . str_replace('-', '/', $id) . '/';
+            $this->createDirectory ($thumbs_location);
+
             $image = Image::make (storage_path ('app/') . $resource->path);
 
             if ($image->width () < $rule->width && $image->height () < $rule->height) {
