@@ -1,5 +1,7 @@
 <?php namespace interactivesolutions\honeycombresources\http\controllers;
 
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use interactivesolutions\honeycombcore\errors\facades\HCLog;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombresources\models\HCResources;
@@ -84,6 +86,7 @@ class HCResourcesController extends HCBaseController
         }
 
         $uploadController = new HCUploadController();
+
         return $uploadController->upload ($resource);
     }
 
@@ -227,30 +230,64 @@ class HCResourcesController extends HCBaseController
      * Show resource
      *
      * @param null $id
-     * @param null $width
-     * @param null $height
-     * @param null $fit
-     * @param string $returnType
+     * @param int|null $width
+     * @param int|null $fit
+     * @param int|null $height
      * @return mixed
      */
-    public function showResource ($id = null, $width = null, $height = null, $fit = null, $returnType = 'raw')
+    public function showResource ($id = null, $width = 0, $height = 0, $fit = 0)
     {
-        if (is_null ($id))
-            return HCLog::error ('R-001', trans ('resources::resources.errors.resource_not_found'));
+        $storagePath = storage_path ('app/');
 
-        $resource = HCResources::find($id);
+        if (is_null ($id))
+            return HCLog::error ('R-001', trans ('resources::resources.errors.resource_id_missing'));
+
+        $resource = HCResources::find ($id);
 
         if (!$resource)
             return HCLog::error ('R-003', trans ('resources::resources.errors.resource_not_found'));
 
+        if (!Storage::exists ($resource->path))
+            HCLog::stop (trans ('resources::resources.errors.resource_not_found_in_storage') . ' : ' . $id);
+
+        $cachePath = generateResourceCacheLocation ($resource->id, $width, $height, $fit) . $resource->extension;
+
+        if (file_exists ($cachePath)) {
+            $resource->size = File::size ($cachePath);
+            $resource->path = $cachePath;
+        } else {
+
+            switch ($resource->mime_type) {
+                case 'image/png' :
+                case 'image/jpeg' :
+                case 'image/jpg' :
+
+                    if ($width != 0 && $height != 0) {
+
+                        createImage($storagePath . $resource->path, $cachePath, $width, $height, $fit);
+
+                        $resource->size = File::size ($cachePath);
+                        $resource->path = $cachePath;
+                    }
+                    else
+                        $resource->path = $storagePath . $resource->path;
+                    break;
+
+                default:
+
+                    $resource->path = $storagePath . $resource->path;
+                    break;
+            }
+        }
+
         // Show resource
-        header('Pragma: public');
-        header('Cache-Control: max-age=86400');
-        header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-        header('Content-Length: ' . $resource->size);
-        header('Content-Disposition: inline;filename="' . $resource->original_name . '"');
-        header('Content-Type: ' . $resource->mime_type);
-        readfile(storage_path ('app/' . $resource->path));
+        header ('Pragma: public');
+        header ('Cache-Control: max-age=86400');
+        header ('Expires: ' . gmdate ('D, d M Y H:i:s \G\M\T', time () + 86400));
+        header ('Content-Length: ' . $resource->size);
+        header ('Content-Disposition: inline;filename="' . $resource->original_name . '"');
+        header ('Content-Type: ' . $resource->mime_type);
+        readfile ($resource->path);
 
         exit;
     }
