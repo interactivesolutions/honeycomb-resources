@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
-use interactivesolutions\honeycombresources\validators\resources\HCThumbsValidator;
+use interactivesolutions\honeycombresources\app\validators\resources\HCThumbsValidator;
 
 class HCThumbsController extends HCBaseController
 {
