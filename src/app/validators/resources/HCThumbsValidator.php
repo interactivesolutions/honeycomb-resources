@@ -13,8 +13,8 @@ class HCThumbsValidator extends HCCoreFormValidator
     {
         return [
             'name'   => 'required',
-            'width'  => 'required',
-            'height' => 'required',
+            'width'  => 'numeric|required',
+            'height' => 'numeric|required',
 
         ];
     }

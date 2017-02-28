@@ -48,7 +48,7 @@ class HCGenerateThumbs extends HCCommand
      * @param $id
      * @throws \Exception
      */
-    private function generateGlobalThumb ($id)
+    private function generateGlobalThumb (string $id)
     {
         $resource = HCResources::find ($id);
 

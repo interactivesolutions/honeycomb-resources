@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use interactivesolutions\honeycombresources\models\HCResources;
 use phpDocumentor\Reflection\Types\Boolean;
+use phpDocumentor\Reflection\Types\Resource;
 use Ramsey\Uuid\Uuid;
 
 class HCUploadController
@@ -106,7 +107,7 @@ class HCUploadController
      * @param $file
      * @return mixed
      */
-    protected function saveResourceInStorage ($resource, UploadedFile $file)
+    protected function saveResourceInStorage (HCResources $resource, UploadedFile $file)
     {
         $this->createFolder ($this->uploadPath);
         $file->move (storage_path ('app/' . $this->uploadPath), $resource->id . '.' . $file->getClientOriginalExtension ());
@@ -116,7 +117,7 @@ class HCUploadController
      * Create folder
      * @param $path
      */
-    protected function createFolder ($path)
+    protected function createFolder (string $path)
     {
         if (!Storage::exists ($path))
             Storage::makeDirectory ($path);
@@ -127,7 +128,7 @@ class HCUploadController
      *
      * @param $resource
      */
-    protected function removeImageFromStorage ($resource)
+    protected function removeImageFromStorage (HCResources $resource)
     {
         $path = $this->uploadPath . $resource->id;
 
@@ -143,7 +144,7 @@ class HCUploadController
      * @param bool $full - if set to true than return full resource data
      * @return mixed
      */
-    public function downloadAndSaveImage ($imageURL, bool $full = null)
+    public function downloadAndSaveImage (string $imageURL, bool $full = null)
     {
         $this->createFolder ('uploads/tmp');
 
@@ -173,7 +174,7 @@ class HCUploadController
      * @param $fileName
      * @return mixed
      */
-    protected function getFileName ($fileName)
+    protected function getFileName (string $fileName)
     {
         if (!$fileName && filter_var ($fileName, FILTER_VALIDATE_URL) === false) {
             return null;

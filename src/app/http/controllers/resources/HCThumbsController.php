@@ -1,5 +1,6 @@
 <?php namespace interactivesolutions\honeycombresources\http\controllers\resources;
 
+use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombresources\models\resources\HCThumbs;
 use interactivesolutions\honeycombresources\validators\resources\HCThumbsValidator;
@@ -78,7 +79,7 @@ class HCThumbsController extends HCBaseController
      * @param null $data
      * @return mixed
      */
-    protected function __create ($data = null)
+    protected function __create (array $data = null)
     {
         if (is_null ($data))
             $data = $this->getInputData ();
@@ -94,7 +95,7 @@ class HCThumbsController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    protected function __update ($id)
+    protected function __update (string $id)
     {
         $record = HCThumbs::findOrFail ($id);
 
@@ -169,7 +170,7 @@ class HCThumbsController extends HCBaseController
      * @param $list
      * @return mixed
      */
-    protected function listSearch ($list)
+    protected function listSearch (Builder $list)
     {
         if (request ()->has ('q')) {
             $parameter = request ()->input ('q');
@@ -212,7 +213,7 @@ class HCThumbsController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    public function getSingleRecord ($id)
+    public function getSingleRecord (string $id)
     {
         $with = [];
 

@@ -1,9 +1,11 @@
 <?php namespace interactivesolutions\honeycombresources\http\controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\errors\facades\HCLog;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombresources\models\HCResources;
 use interactivesolutions\honeycombresources\validators\HCResourcesValidator;
+use Nette\Object;
 
 class HCResourcesController extends HCBaseController
 {
@@ -75,7 +77,7 @@ class HCResourcesController extends HCBaseController
      * @param null $data
      * @return mixed
      */
-    protected function __create ($data = null)
+    protected function __create (array $data = null)
     {
         if (is_null ($data)) {
             $resource = request ()->file ('file');
@@ -93,7 +95,7 @@ class HCResourcesController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    protected function __update ($id)
+    protected function __update (string $id)
     {
         $record = HCResources::findOrFail ($id);
 
@@ -168,14 +170,13 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed
      */
-    protected function listSearch ($list)
+    protected function listSearch (Builder $list)
     {
         if (request ()->has ('q')) {
             $parameter = request ()->input ('q');
 
             $list = $list->where (function ($query) use ($parameter) {
                 $query->where ('original_name', 'LIKE', '%' . $parameter . '%')
-                    ->orWhere ('safe_name', 'LIKE', '%' . $parameter . '%')
                     ->orWhere ('size', 'LIKE', '%' . $parameter . '%')
                     ->orWhere ('path', 'LIKE', '%' . $parameter . '%');
             });
@@ -209,7 +210,7 @@ class HCResourcesController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    public function getSingleRecord ($id)
+    public function getSingleRecord (string $id)
     {
         $with = [];
 
@@ -233,7 +234,7 @@ class HCResourcesController extends HCBaseController
      * @param string $returnType
      * @return mixed
      */
-    public function showResource ($id = null, $width = null, $height = null, $fit = null, $returnType = 'raw')
+    public function showResource (string $id = null, int $width = null, int $height = null, bool $fit = null, string $returnType = 'raw')
     {
         if (is_null ($id))
             return HCLog::error ('R-001', trans ('resources::resources.errors.resource_not_found'));

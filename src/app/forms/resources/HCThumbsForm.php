@@ -16,7 +16,7 @@ class HCThumbsForm
      * @param bool $edit
      * @return array
      */
-    public function createForm ($edit = false)
+    public function createForm (bool $edit = false)
     {
         $form = [
             'storageURL' => route ('admin.api.resources.thumbs'),
