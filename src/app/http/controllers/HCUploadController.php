@@ -1,13 +1,13 @@
 <?php
 
-namespace interactivesolutions\honeycombresources\http\controllers;
+namespace interactivesolutions\honeycombresources\app\http\controllers;
 
 use DB;
 use HCLog;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use interactivesolutions\honeycombresources\models\HCResources;
+use interactivesolutions\honeycombresources\app\models\HCResources;
 use phpDocumentor\Reflection\Types\Boolean;
 use phpDocumentor\Reflection\Types\Resource;
 use Ramsey\Uuid\Uuid;

@@ -1,6 +1,6 @@
 <?php
 
-namespace interactivesolutions\honeycombresources\forms;
+namespace interactivesolutions\honeycombresources\app\forms;
 
 class HCResourcesForm
 {
@@ -42,31 +42,27 @@ class HCResourcesForm
             return $form;
 
         //Make changes to edit form if needed
-        $form['structure'] = array_merge ($form['structure'], [[
+        $form['structure'] = [[
             "type"            => "singleLine",
             "fieldID"         => "original_name",
             "label"           => trans ("HCResources::resources.original_name"),
-            "required"        => 1,
-            "requiredVisible" => 1,
+            "readonly"        => 1,
         ], [
             "type"            => "singleLine",
             "fieldID"         => "id",
             "label"           => trans ("HCResources::resources.safe_name"),
-            "required"        => 1,
-            "requiredVisible" => 1,
+            "readonly"        => 1,
         ], [
             "type"            => "singleLine",
             "fieldID"         => "size",
             "label"           => trans ("HCResources::resources.size"),
-            "required"        => 0,
-            "requiredVisible" => 0,
+            "readonly"        => 1,
         ], [
             "type"            => "singleLine",
             "fieldID"         => "path",
             "label"           => trans ("HCResources::resources.path"),
-            "required"        => 0,
-            "requiredVisible" => 0,
-        ]]);
+            "readonly"        => 1,
+        ]];
 
         return $form;
     }

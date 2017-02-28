@@ -1,10 +1,10 @@
-<?php namespace interactivesolutions\honeycombresources\http\controllers;
+<?php namespace interactivesolutions\honeycombresources\app\http\controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\errors\facades\HCLog;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
-use interactivesolutions\honeycombresources\models\HCResources;
-use interactivesolutions\honeycombresources\validators\HCResourcesValidator;
+use interactivesolutions\honeycombresources\app\models\HCResources;
+use interactivesolutions\honeycombresources\app\validators\HCResourcesValidator;
 use Nette\Object;
 
 class HCResourcesController extends HCBaseController

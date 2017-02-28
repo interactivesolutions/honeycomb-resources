@@ -1,8 +1,8 @@
-<?php namespace interactivesolutions\honeycombresources\http\controllers\resources;
+<?php namespace interactivesolutions\honeycombresources\app\http\controllers\resources;
 
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
-use interactivesolutions\honeycombresources\models\resources\HCThumbs;
+use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 use interactivesolutions\honeycombresources\validators\resources\HCThumbsValidator;
 
 class HCThumbsController extends HCBaseController

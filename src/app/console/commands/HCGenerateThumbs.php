@@ -1,11 +1,11 @@
 <?php
 
-namespace interactivesolutions\honeycombscripts\commands;
+namespace interactivesolutions\honeycombresources\app\console\commands;
 
 use Intervention\Image\ImageManagerStatic as Image;
 use interactivesolutions\honeycombcore\commands\HCCommand;
-use interactivesolutions\honeycombresources\models\HCResources;
-use interactivesolutions\honeycombresources\models\resources\HCThumbs;
+use interactivesolutions\honeycombresources\app\models\HCResources;
+use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 
 class HCGenerateThumbs extends HCCommand
 {

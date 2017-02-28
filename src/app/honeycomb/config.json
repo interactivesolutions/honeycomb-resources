@@ -3,8 +3,8 @@
     "serviceProviderNameSpace": "HCResources"
   },
   "formData": {
-    "resources": "interactivesolutions\\honeycombresources\\forms\\HCResourcesForm",
-    "resources-thumbs": "interactivesolutions\\honeycombresources\\forms\\resources\\HCThumbsForm"
+    "resources": "interactivesolutions\\honeycombresources\\app\\forms\\HCResourcesForm",
+    "resources-thumbs": "interactivesolutions\\honeycombresources\\app\\forms\\resources\\HCThumbsForm"
   },
   "adminMenu": [
     {

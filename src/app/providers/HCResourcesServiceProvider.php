@@ -1,9 +1,10 @@
 <?php
 
-namespace interactivesolutions\honeycombresources\providers;
+namespace interactivesolutions\honeycombresources\app\providers;
 
 use Illuminate\Support\ServiceProvider;
-use interactivesolutions\honeycombscripts\commands\HCGenerateThumbs;
+//use interactivesolutions\honeycombscripts\app\console\commands\HCGenerateThumbs;
+use interactivesolutions\honeycombresources\app\console\commands\HCGenerateThumbs;
 use Intervention\Image\ImageServiceProvider;
 
 class HCResourcesServiceProvider extends ServiceProvider
@@ -17,7 +18,7 @@ class HCResourcesServiceProvider extends ServiceProvider
         HCGenerateThumbs::class
     ];
 
-    protected $namespace = 'interactivesolutions\honeycombresources\http\controllers';
+    protected $namespace = 'interactivesolutions\honeycombresources\app\http\controllers';
 
     /**
      * Bootstrap the application services.

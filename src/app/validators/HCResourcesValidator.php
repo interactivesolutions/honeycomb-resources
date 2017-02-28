@@ -1,4 +1,6 @@
-<?php namespace interactivesolutions\honeycombresources\validators;
+<?php
+
+namespace interactivesolutions\honeycombresources\app\validators;
 
 use interactivesolutions\honeycombcore\http\controllers\HCCoreFormValidator;
 
@@ -9,7 +11,7 @@ class HCResourcesValidator extends HCCoreFormValidator
      *
      * @return array
      */
-    protected function rules ()
+    protected function rules()
     {
         return [
             'original_name' => 'required',

@@ -1,6 +1,6 @@
 <?php
 
-namespace interactivesolutions\honeycombresources\forms\resources;
+namespace interactivesolutions\honeycombresources\app\forms\resources;
 
 class HCThumbsForm
 {
