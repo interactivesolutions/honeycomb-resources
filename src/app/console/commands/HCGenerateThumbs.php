@@ -51,7 +51,7 @@ class HCGenerateThumbs extends HCCommand
     {
         $resource = HCResources::find ($id);
 
-        if (strpos ($resource->mime_type, 'image' === false))
+        if (strpos($resource->mime_type, 'image') === false || strpos($resource->mime_type, 'svg') !== false)
             return;
 
         if (!$resource)
