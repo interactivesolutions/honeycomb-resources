@@ -1,11 +1,12 @@
 <?php namespace interactivesolutions\honeycombresources\app\http\controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use interactivesolutions\honeycombcore\errors\facades\HCLog;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombresources\app\models\HCResources;
 use interactivesolutions\honeycombresources\app\validators\HCResourcesValidator;
-use Nette\Object;
 
 class HCResourcesController extends HCBaseController
 {
@@ -74,7 +75,7 @@ class HCResourcesController extends HCBaseController
     /**
      * Create item
      *
-     * @param null $data
+     * @param array|null $data
      * @return mixed
      */
     protected function __create (array $data = null)
@@ -227,31 +228,65 @@ class HCResourcesController extends HCBaseController
     /**
      * Show resource
      *
-     * @param null $id
-     * @param null $width
-     * @param null $height
-     * @param null $fit
-     * @param string $returnType
+     * @param null|string $id
+     * @param int|null $width
+     * @param int|null $height
+     * @param bool|null $fit
      * @return mixed
      */
-    public function showResource (string $id = null, int $width = null, int $height = null, bool $fit = null, string $returnType = 'raw')
+    public function showResource (string $id = null, int $width = 0, int $height = 0, bool $fit = false)
     {
-        if (is_null ($id))
-            return HCLog::error ('R-001', trans ('resources::resources.errors.resource_not_found'));
+        $storagePath = storage_path ('app/');
 
-        $resource = HCResources::find($id);
+        if (is_null ($id))
+            return HCLog::error ('R-001', trans ('resources::resources.errors.resource_id_missing'));
+
+        $resource = HCResources::find ($id);
 
         if (!$resource)
             return HCLog::error ('R-003', trans ('resources::resources.errors.resource_not_found'));
 
+        if (!Storage::exists ($resource->path))
+            HCLog::stop (trans ('resources::resources.errors.resource_not_found_in_storage') . ' : ' . $id);
+
+        $cachePath = generateResourceCacheLocation ($resource->id, $width, $height, $fit) . $resource->extension;
+
+        if (file_exists ($cachePath)) {
+            $resource->size = File::size ($cachePath);
+            $resource->path = $cachePath;
+        } else {
+
+            switch ($resource->mime_type) {
+                case 'image/png' :
+                case 'image/jpeg' :
+                case 'image/jpg' :
+
+                    if ($width != 0 && $height != 0) {
+
+                        createImage($storagePath . $resource->path, $cachePath, $width, $height, $fit);
+
+                        $resource->size = File::size ($cachePath);
+                        $resource->path = $cachePath;
+                    }
+                    else
+                        $resource->path = $storagePath . $resource->path;
+                    break;
+
+                default:
+
+                    $resource->path = $storagePath . $resource->path;
+                    break;
+            }
+        }
+
         // Show resource
-        header('Pragma: public');
-        header('Cache-Control: max-age=86400');
-        header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-        header('Content-Length: ' . $resource->size);
-        header('Content-Disposition: inline;filename="' . $resource->original_name . '"');
-        header('Content-Type: ' . $resource->mime_type);
-        readfile(storage_path ('app/' . $resource->path));
+        header ('Pragma: public');
+        header ('Cache-Control: max-age=86400');
+        header ('Expires: ' . gmdate ('D, d M Y H:i:s \G\M\T', time () + 86400));
+        header ('Content-Length: ' . $resource->size);
+        header ('Content-Disposition: inline;filename="' . $resource->original_name . '"');
+        header ('Content-Type: ' . $resource->mime_type);
+        readfile ($resource->path);
 
         exit;
     }

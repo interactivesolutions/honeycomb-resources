@@ -1,8 +1,7 @@
 <?php
 
-namespace interactivesolutions\honeycombresources\app\console\commands;
+namespace interactivesolutions\honeycombscripts\commands;
 
-use Intervention\Image\ImageManagerStatic as Image;
 use interactivesolutions\honeycombcore\commands\HCCommand;
 use interactivesolutions\honeycombresources\app\models\HCResources;
 use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
@@ -48,7 +47,7 @@ class HCGenerateThumbs extends HCCommand
      * @param $id
      * @throws \Exception
      */
-    private function generateGlobalThumb (string $id)
+    private function generateGlobalThumb ($id)
     {
         $resource = HCResources::find ($id);
 
@@ -61,23 +60,8 @@ class HCGenerateThumbs extends HCCommand
         $thumbRules = HCThumbs::where ('global', 1)->get ();
 
         foreach ($thumbRules as $rule) {
-
-            $thumbs_location = 'thumbs/' . str_replace('-', '/', $id) . '/';
-            $this->createDirectory ($thumbs_location);
-
-            $image = Image::make (storage_path ('app/') . $resource->path);
-
-            if ($image->width () < $rule->width && $image->height () < $rule->height) {
-            } else {
-                if ($rule->fit)
-                    $image->fit ($rule->width, $rule->height);
-                else
-                    $image->resize ($rule->width, $rule->height, function ($constraint) {
-                        $constraint->aspectRatio ();
-                    });
-            }
-
-            $image->save ($thumbs_location . $rule->width . '_' . $rule->height . $resource->extension, 100);
+            $destination = generateResourcePublicLocation ($id, $rule->width, $rule->height, $rule->fit) . $resource->extension;
+            createImage (storage_path ('app/') . $resource->path, $destination, $rule->width, $rule->height, $rule->fit);
         }
     }
 }
