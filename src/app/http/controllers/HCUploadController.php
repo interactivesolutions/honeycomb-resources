@@ -21,6 +21,13 @@ class HCUploadController
      */
     private $uploadPath;
 
+    /**
+     * If uploaded file has predefined ID it will be used
+     *
+     * @var
+     */
+    private $resourceID;
+
     public function __construct ()
     {
         $this->uploadPath = 'uploads/' . date ("Y-m-d") . DIRECTORY_SEPARATOR;
@@ -32,14 +39,17 @@ class HCUploadController
      *
      * @param UploadedFile $file
      * @param bool $full
+     * @param string $id
      * @return mixed
      */
-    public function upload (UploadedFile $file, bool $full = null)
+    public function upload (UploadedFile $file, bool $full = null, string $id = null)
     {
         if (is_null ($file))
             return HCLog::info ('R-UPLOAD-001', trans ('resources::resources.errors.no_resource_selected'));
 
         DB::beginTransaction ();
+
+        $this->resourceID = $id;
 
         try {
             $resource = $this->createResourceRecord ($file);
@@ -59,7 +69,7 @@ class HCUploadController
         DB::commit ();
 
         if ($full)
-            return $resource->toArray();
+            return $resource->toArray ();
 
         return [
             'id'  => $resource->id,
@@ -90,7 +100,11 @@ class HCUploadController
     {
         $params = [];
 
-        $params['id'] = Uuid::uuid4 ();
+        if ($this->resourceID)
+            $params['id'] = $this->resourceID;
+        else
+            $params['id'] = Uuid::uuid4 ();
+
         $params['original_name'] = $file->getClientOriginalName ();
         $params['extension'] = '.' . $file->getClientOriginalExtension ();
         $params['path'] = $this->uploadPath . $params['id'] . $params['extension'];
@@ -140,21 +154,21 @@ class HCUploadController
     /**
      * Downloading and storing image in the system
      *
-     * @param $imageURL
+     * @param string $source
      * @param bool $full - if set to true than return full resource data
+     * @param string $id
      * @return mixed
      */
-    public function downloadAndSaveImage (string $imageURL, bool $full = null)
+    public function downloadResource (string $source, bool $full = null, string $id = null)
     {
         $this->createFolder ('uploads/tmp');
 
-        $fileName = $this->getFileName ($imageURL);
+        $fileName = $this->getFileName ($source);
 
         if ($fileName && $fileName != '') {
             $destination = storage_path ('app/uploads/tmp/' . $fileName);
 
-            // download resource to tmp folder with wget
-            echo (shell_exec (sprintf ('wget --quiet -O %s %s', escapeshellarg ($destination), escapeshellarg ($imageURL))));
+            file_put_contents ($destination, file_get_contents ($source));
 
             if (!\File::exists ($destination)) {
                 return null;
@@ -162,7 +176,7 @@ class HCUploadController
 
             $file = new UploadedFile($destination, $fileName, mime_content_type ($destination), filesize ($destination), null, true);
 
-            return $this->upload ($file, $full);
+            return $this->upload ($file, $full, $id);
         }
 
         return null;
