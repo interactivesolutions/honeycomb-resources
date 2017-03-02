@@ -16,32 +16,32 @@ class HCResourcesController extends HCBaseController
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function adminView ()
+    public function adminView()
     {
         $config = [
-            'title'       => trans ('HCResources::resources.page_title'),
-            'listURL'     => route ('admin.api.resources'),
-            'newFormUrl'  => route ('admin.api.form-manager', ['resources-new']),
-            'editFormUrl' => route ('admin.api.form-manager', ['resources-edit']),
-            'imagesUrl'   => route ('resource.get', ['/']),
-            'headers'     => $this->getAdminListHeader (),
+            'title'       => trans('HCResources::resources.page_title'),
+            'listURL'     => route('admin.api.resources'),
+            'newFormUrl'  => route('admin.api.form-manager', ['resources-new']),
+            'editFormUrl' => route('admin.api.form-manager', ['resources-edit']),
+            'imagesUrl'   => route('resource.get', ['/']),
+            'headers'     => $this->getAdminListHeader(),
         ];
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_create'))
+        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_create'))
             $config['actions'][] = 'new';
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_update')) {
+        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_update')) {
             $config['actions'][] = 'update';
             $config['actions'][] = 'restore';
         }
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_delete'))
+        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_delete'))
             $config['actions'][] = 'delete';
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_search'))
+        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_search'))
             $config['actions'][] = 'search';
 
-        return view ('HCCoreUI::admin.content.list', ['config' => $config]);
+        return view('HCCoreUI::admin.content.list', ['config' => $config]);
     }
 
     /**
@@ -49,24 +49,28 @@ class HCResourcesController extends HCBaseController
      *
      * @return array
      */
-    public function getAdminListHeader ()
+    public function getAdminListHeader()
     {
         return [
             'original_name' => [
                 "type"  => "text",
-                "label" => trans ('HCResources::resources.original_name'),
+                "label" => trans('HCResources::resources.original_name'),
             ],
-            'safe_name'     => [
-                "type"  => "text",
-                "label" => trans ('HCResources::resources.safe_name'),
+            'id'         => [
+                "type"    => "image",
+                "label"   => trans('HCResources::resources.dsaflhsalk'),
+                "options" => [
+                    "w" => 100,
+                    "h" => 100
+                ]
             ],
             'size'          => [
                 "type"  => "text",
-                "label" => trans ('HCResources::resources.size'),
+                "label" => trans('HCResources::resources.size'),
             ],
             'path'          => [
                 "type"  => "text",
-                "label" => trans ('HCResources::resources.path'),
+                "label" => trans('HCResources::resources.path'),
             ],
 
         ];
@@ -78,16 +82,16 @@ class HCResourcesController extends HCBaseController
      * @param array|null $data
      * @return mixed
      */
-    protected function __create (array $data = null)
+    protected function __create(array $data = null)
     {
-        if (is_null ($data)) {
-            $resource = request ()->file ('file');
+        if (is_null($data)) {
+            $resource = request()->file('file');
         } else {
             $resource = $data;
         }
 
         $uploadController = new HCUploadController();
-        return $uploadController->upload ($resource);
+        return $uploadController->upload($resource);
     }
 
     /**
@@ -96,15 +100,15 @@ class HCResourcesController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    protected function __update (string $id)
+    protected function __update(string $id)
     {
-        $record = HCResources::findOrFail ($id);
+        $record = HCResources::findOrFail($id);
 
-        $data = $this->getInputData ();
+        $data = $this->getInputData();
 
-        $record->update (array_get ($data, 'record'));
+        $record->update(array_get($data, 'record'));
 
-        return $this->getSingleRecord ($record->id);
+        return $this->getSingleRecord($record->id);
     }
 
     /**
@@ -113,9 +117,9 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __delete (array $list)
+    protected function __delete(array $list)
     {
-        HCResources::destroy ($list);
+        HCResources::destroy($list);
     }
 
     /**
@@ -124,9 +128,9 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __forceDelete (array $list)
+    protected function __forceDelete(array $list)
     {
-        HCResources::onlyTrashed ()->whereIn ('id', $list)->forceDelete ();
+        HCResources::onlyTrashed()->whereIn('id', $list)->forceDelete();
     }
 
     /**
@@ -135,35 +139,35 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __restore (array $list)
+    protected function __restore(array $list)
     {
-        HCResources::whereIn ('id', $list)->restore ();
+        HCResources::whereIn('id', $list)->restore();
     }
 
     /**
      * @return mixed
      */
-    public function listData ()
+    public function listData()
     {
         $with = [];
-        $select = HCResources::getFillableFields ();
+        $select = HCResources::getFillableFields();
 
-        $list = HCResources::with ($with)->select ($select)
+        $list = HCResources::with($with)->select($select)
             // add filters
-            ->where (function ($query) use ($select) {
-                $query = $this->getRequestParameters ($query, $select);
+            ->where(function ($query) use ($select) {
+                $query = $this->getRequestParameters($query, $select);
             });
 
         // enabling check for deleted
-        $list = $this->checkForDeleted ($list);
+        $list = $this->checkForDeleted($list);
 
         // add search items
-        $list = $this->listSearch ($list);
+        $list = $this->listSearch($list);
 
         // ordering data
-        $list = $this->orderData ($list, $select);
+        $list = $this->orderData($list, $select);
 
-        return $list->paginate ($this->recordsPerPage)->toArray ();
+        return $list->paginate($this->recordsPerPage)->toArray();
     }
 
     /**
@@ -171,15 +175,15 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed
      */
-    protected function listSearch (Builder $list)
+    protected function listSearch(Builder $list)
     {
-        if (request ()->has ('q')) {
-            $parameter = request ()->input ('q');
+        if (request()->has('q')) {
+            $parameter = request()->input('q');
 
-            $list = $list->where (function ($query) use ($parameter) {
-                $query->where ('original_name', 'LIKE', '%' . $parameter . '%')
-                    ->orWhere ('size', 'LIKE', '%' . $parameter . '%')
-                    ->orWhere ('path', 'LIKE', '%' . $parameter . '%');
+            $list = $list->where(function ($query) use ($parameter) {
+                $query->where('original_name', 'LIKE', '%' . $parameter . '%')
+                    ->orWhere('size', 'LIKE', '%' . $parameter . '%')
+                    ->orWhere('path', 'LIKE', '%' . $parameter . '%');
             });
         }
 
@@ -191,16 +195,16 @@ class HCResourcesController extends HCBaseController
      *
      * @return mixed
      */
-    protected function getInputData ()
+    protected function getInputData()
     {
-        (new HCResourcesValidator())->validateForm ();
+        (new HCResourcesValidator())->validateForm();
 
-        $_data = request ()->all ();
+        $_data = request()->all();
 
-        array_set ($data, 'record.original_name', array_get ($_data, 'original_name'));
-        array_set ($data, 'record.safe_name', array_get ($_data, 'safe_name'));
-        array_set ($data, 'record.size', array_get ($_data, 'size'));
-        array_set ($data, 'record.path', array_get ($_data, 'path'));
+        array_set($data, 'record.original_name', array_get($_data, 'original_name'));
+        array_set($data, 'record.safe_name', array_get($_data, 'safe_name'));
+        array_set($data, 'record.size', array_get($_data, 'size'));
+        array_set($data, 'record.path', array_get($_data, 'path'));
 
         return $data;
     }
@@ -211,16 +215,16 @@ class HCResourcesController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    public function getSingleRecord (string $id)
+    public function getSingleRecord(string $id)
     {
         $with = [];
 
-        $select = HCResources::getFillableFields ();
+        $select = HCResources::getFillableFields();
 
-        $record = HCResources::with ($with)
-            ->select ($select)
-            ->where ('id', $id)
-            ->firstOrFail ();
+        $record = HCResources::with($with)
+            ->select($select)
+            ->where('id', $id)
+            ->firstOrFail();
 
         return $record;
     }
@@ -234,25 +238,25 @@ class HCResourcesController extends HCBaseController
      * @param bool|null $fit
      * @return mixed
      */
-    public function showResource (string $id = null, int $width = 0, int $height = 0, bool $fit = false)
+    public function showResource(string $id = null, int $width = 0, int $height = 0, bool $fit = false)
     {
-        $storagePath = storage_path ('app/');
+        $storagePath = storage_path('app/');
 
-        if (is_null ($id))
-            return HCLog::error ('R-001', trans ('resources::resources.errors.resource_id_missing'));
+        if (is_null($id))
+            return HCLog::error('R-001', trans('resources::resources.errors.resource_id_missing'));
 
-        $resource = HCResources::find ($id);
+        $resource = HCResources::find($id);
 
         if (!$resource)
-            return HCLog::error ('R-003', trans ('resources::resources.errors.resource_not_found'));
+            return HCLog::error('R-003', trans('resources::resources.errors.resource_not_found'));
 
-        if (!Storage::exists ($resource->path))
-            HCLog::stop (trans ('resources::resources.errors.resource_not_found_in_storage') . ' : ' . $id);
+        if (!Storage::exists($resource->path))
+            HCLog::stop(trans('resources::resources.errors.resource_not_found_in_storage') . ' : ' . $id);
 
-        $cachePath = generateResourceCacheLocation ($resource->id, $width, $height, $fit) . $resource->extension;
+        $cachePath = generateResourceCacheLocation($resource->id, $width, $height, $fit) . $resource->extension;
 
-        if (file_exists ($cachePath)) {
-            $resource->size = File::size ($cachePath);
+        if (file_exists($cachePath)) {
+            $resource->size = File::size($cachePath);
             $resource->path = $cachePath;
         } else {
 
@@ -265,10 +269,9 @@ class HCResourcesController extends HCBaseController
 
                         createImage($storagePath . $resource->path, $cachePath, $width, $height, $fit);
 
-                        $resource->size = File::size ($cachePath);
+                        $resource->size = File::size($cachePath);
                         $resource->path = $cachePath;
-                    }
-                    else
+                    } else
                         $resource->path = $storagePath . $resource->path;
                     break;
 
@@ -280,13 +283,13 @@ class HCResourcesController extends HCBaseController
         }
 
         // Show resource
-        header ('Pragma: public');
-        header ('Cache-Control: max-age=86400');
-        header ('Expires: ' . gmdate ('D, d M Y H:i:s \G\M\T', time () + 86400));
-        header ('Content-Length: ' . $resource->size);
-        header ('Content-Disposition: inline;filename="' . $resource->original_name . '"');
-        header ('Content-Type: ' . $resource->mime_type);
-        readfile ($resource->path);
+        header('Pragma: public');
+        header('Cache-Control: max-age=86400');
+        header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+        header('Content-Length: ' . $resource->size);
+        header('Content-Disposition: inline;filename="' . $resource->original_name . '"');
+        header('Content-Type: ' . $resource->mime_type);
+        readfile($resource->path);
 
         exit;
     }
