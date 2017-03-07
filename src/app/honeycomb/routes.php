@@ -8,7 +8,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
 
     Route::group(['prefix' => 'api'], function ()
     {
-        Route::get('resources/thumbs', ['as' => 'admin.api.resources.thumbs', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@listData']);
+        Route::get('resources/thumbs', ['as' => 'admin.api.resources.thumbs', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@pageData']);
+        Route::get('resources/thumbs/list', ['as' => 'admin.api.resources.thumbs.list', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@list']);
         Route::get('resources/thumbs/search', ['as' => 'admin.api.resources.thumbs.search', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@search']);
         Route::get('resources/thumbs/{id}', ['as' => 'admin.api.resources.thumbs.single', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@getSingleRecord']);
         Route::post('resources/thumbs/{id}/duplicate', ['as' => 'admin.api.resources.thumbs.duplicate', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_update'], 'uses' => 'resources\\HCThumbsController@duplicate']);
@@ -30,7 +31,8 @@ Route::group (['prefix' => 'admin', 'middleware' => ['web', 'auth']], function (
     Route::get ('resources', ['as' => 'admin.resources', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@adminView']);
 
     Route::group (['prefix' => 'api'], function () {
-        Route::get ('resources', ['as' => 'admin.api.resources', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@listData']);
+        Route::get ('resources', ['as' => 'admin.api.resources', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@pageData']);
+        Route::get ('resources/list', ['as' => 'admin.api.resources.list', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@list']);
         Route::get ('resources/search', ['as' => 'admin.api.resources.search', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@search']);
         Route::get ('resources/{id}', ['as' => 'admin.api.resources.single', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@getSingleRecord']);
         Route::post ('resources/{id}/duplicate', ['as' => 'admin.api.resources.duplicate', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_update'], 'uses' => 'HCResourcesController@duplicate']);
