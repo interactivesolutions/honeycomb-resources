@@ -145,12 +145,17 @@ class HCResourcesController extends HCBaseController
     }
 
     /**
+     * Creating data query
+     *
+     * @param array $select
      * @return mixed
      */
-    public function listData()
+    public function createQuery(array $select = null)
     {
         $with = [];
-        $select = HCResources::getFillableFields();
+
+        if ($select == null)
+            $select = HCResources::getFillableFields();
 
         $list = HCResources::with($with)->select($select)
             // add filters
@@ -167,9 +172,31 @@ class HCResourcesController extends HCBaseController
         // ordering data
         $list = $this->orderData($list, $select);
 
-        return $list->paginate($this->recordsPerPage)->toArray();
+        return $list;
     }
 
+    /**
+     * Creating data list
+     * @return mixed
+     */
+    public function listData()
+    {
+        return $this->createQuery()->paginate($this->recordsPerPage);
+    }
+
+    /**
+     * Creating data list based on search
+     * @return mixed
+     */
+    public function search()
+    {
+        if (!request('q'))
+            return [];
+
+        //TODO set limit to start search
+
+        return $this->createQuery()->get();
+    }
     /**
      * List search elements
      * @param $list

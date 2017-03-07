@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
+use interactivesolutions\honeycombresources\app\models\HCResources;
 use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 use interactivesolutions\honeycombresources\app\validators\resources\HCThumbsValidator;
 
@@ -140,29 +141,57 @@ class HCThumbsController extends HCBaseController
     }
 
     /**
+     * Creating data query
+     *
+     * @param array $select
      * @return mixed
      */
-    public function listData ()
+    public function createQuery(array $select = null)
     {
         $with = [];
-        $select = HCThumbs::getFillableFields ();
 
-        $list = HCThumbs::with ($with)->select ($select)
+        if ($select == null)
+            $select = HCThumbs::getFillableFields();
+
+        $list = HCThumbs::with($with)->select($select)
             // add filters
-            ->where (function ($query) use ($select) {
-                $query = $this->getRequestParameters ($query, $select);
+            ->where(function ($query) use ($select) {
+                $query = $this->getRequestParameters($query, $select);
             });
 
         // enabling check for deleted
-        $list = $this->checkForDeleted ($list);
+        $list = $this->checkForDeleted($list);
 
         // add search items
-        $list = $this->listSearch ($list);
+        $list = $this->listSearch($list);
 
         // ordering data
-        $list = $this->orderData ($list, $select);
+        $list = $this->orderData($list, $select);
 
-        return $list->paginate ($this->recordsPerPage)->toArray ();
+        return $list;
+    }
+
+    /**
+     * Creating data list
+     * @return mixed
+     */
+    public function listData()
+    {
+        return $this->createQuery()->paginate($this->recordsPerPage);
+    }
+
+    /**
+     * Creating data list based on search
+     * @return mixed
+     */
+    public function search()
+    {
+        if (!request('q'))
+            return [];
+
+        //TODO set limit to start search
+
+        return $this->createQuery()->get();
     }
 
     /**
