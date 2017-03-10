@@ -1,6 +1,7 @@
 <?php
 
-//packages/interactivesolutions/honeycomb-resources/src/app/routes/routes.resources.thumbs.php
+//interactivesolutions/honeycomb-resources/src/app/routes/01_routes.resources.thumbs.php
+
 
 Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
 {
@@ -25,7 +26,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web', 'auth']], function ()
 });
 
 
-//packages/interactivesolutions/honeycomb-resources/src/app/routes/routes.resources.php
+//interactivesolutions/honeycomb-resources/src/app/routes/02_routes.resources.php
+
 
 Route::group (['prefix' => 'admin', 'middleware' => ['web', 'auth']], function () {
     Route::get ('resources', ['as' => 'admin.resources', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@adminView']);
