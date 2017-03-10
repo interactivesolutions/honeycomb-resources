@@ -81,6 +81,7 @@ class HCResourcesController extends HCBaseController
      *
      * @param array|null $data
      * @return mixed
+     * @throws \Exception
      */
     protected function __create(array $data = null)
     {
@@ -89,6 +90,9 @@ class HCResourcesController extends HCBaseController
         } else {
             $resource = $data;
         }
+
+        if ($resource == null)
+            throw new \Exception('File is missing...');
 
         $uploadController = new HCUploadController();
         return $uploadController->upload($resource);
