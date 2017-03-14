@@ -33,12 +33,26 @@
           "interactivesolutions_honeycomb_resources_resources_update",
           "interactivesolutions_honeycomb_resources_resources_delete",
           "interactivesolutions_honeycomb_resources_resources_force_delete"
+        ],
+        "actionsApps": [
+          "interactivesolutions_honeycomb_resources_resources_list",
+          "interactivesolutions_honeycomb_resources_resources_create",
+          "interactivesolutions_honeycomb_resources_resources_update",
+          "interactivesolutions_honeycomb_resources_resources_delete",
+          "interactivesolutions_honeycomb_resources_resources_force_delete"
         ]
       },
       {
         "name": "admin.resources.thumbs",
         "controller": "interactivesolutions\\honeycombresources\\http\\controllers\\resources\\HCThumbsController",
         "actions": [
+          "interactivesolutions_honeycomb_resources_resources_thumbs_list",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_create",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_update",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_delete",
+          "interactivesolutions_honeycomb_resources_resources_thumbs_force_delete"
+        ],
+        "actionsApps": [
           "interactivesolutions_honeycomb_resources_resources_thumbs_list",
           "interactivesolutions_honeycomb_resources_resources_thumbs_create",
           "interactivesolutions_honeycomb_resources_resources_thumbs_update",
