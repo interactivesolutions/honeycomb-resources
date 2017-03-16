@@ -8,11 +8,8 @@ use Intervention\Image\ImageServiceProvider;
 
 class HCResourcesServiceProvider extends HCBaseServiceProvider
 {
-    /**
-     * Register commands
-     *
-     * @var array
-     */
+    protected $homeDirectory = __DIR__;
+    
     protected $commands = [
         HCGenerateThumbs::class
     ];
@@ -24,7 +21,7 @@ class HCResourcesServiceProvider extends HCBaseServiceProvider
      */
     protected function registerProviders ()
     {
-        $this->app->register(ImageServiceProvider::class);
+        $this->app->register (ImageServiceProvider::class);
     }
 }
 
