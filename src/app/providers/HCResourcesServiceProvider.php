@@ -16,6 +16,9 @@ class HCResourcesServiceProvider extends HCBaseServiceProvider
 
     protected $namespace = 'interactivesolutions\honeycombresources\app\http\controllers';
 
+    public $serviceProviderNameSpace = 'HCResources';
+
+
     /**
      * Registering external providers
      */
