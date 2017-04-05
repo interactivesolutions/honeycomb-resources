@@ -169,20 +169,20 @@ class HCUploadController
 
             $destination = storage_path('app/uploads/tmp/' . $fileName);
 
-            if (!$mime_type)
-                $mime_type = mime_content_type($destination);
-
             file_put_contents($destination, file_get_contents($source));
 
             if (!\File::exists($destination)) {
                 return null;
             }
 
+            if (!$mime_type)
+                $mime_type = mime_content_type($destination);
+
             $file = new UploadedFile($destination, $fileName, $mime_type, filesize($destination), null, true);
 
             return $this->upload($file, $full, $id);
         }
-
+        
         return null;
     }
 
