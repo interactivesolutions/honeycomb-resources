@@ -1,6 +1,6 @@
 <?php
 
-Route::group (['prefix' => 'admin', 'middleware' => ['web', 'auth']], function () {
+Route::group (['prefix' => env('HC_ADMIN_URL'), 'middleware' => ['web', 'auth']], function () {
     Route::get ('resources', ['as' => 'admin.resources', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@adminView']);
 
     Route::group (['prefix' => 'api/resources'], function () {
