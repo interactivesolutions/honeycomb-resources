@@ -92,7 +92,7 @@ class HCResourcesController extends HCBaseController
         }
 
         if ($resource == null)
-            throw new \Exception('File is missing...');
+            throw new \Exception(trans('HCResources::resources.file_missing'));
 
         $uploadController = new HCUploadController();
         return $uploadController->upload($resource);
