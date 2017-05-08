@@ -54,13 +54,16 @@ class HCUploadController
             $resource = $this->createResourceRecord($file);
             $this->saveResourceInStorage($resource, $file);
 
+            //Generating checksum
+            if ($resource['size'] <= env('MAX_CHECKSUM_SIZE', 102400000 ))
+                $resource->update(['checksum' => hash_file('sha256', storage_path('app/' . $resource['path']))]);
+
             Artisan::call('hc:generate-thumbs', ['id' => $resource->id]);
         } catch (\Exception $e) {
             DB::rollback();
 
-            if (isset($resource)) {
+            if (isset($resource))
                 $this->removeImageFromStorage($resource);
-            }
 
             throw new \Exception($e);
         }
@@ -106,7 +109,7 @@ class HCUploadController
 
         $params['original_name'] = $file->getClientOriginalName();
         $params['extension'] = '.' . $file->getClientOriginalExtension();
-        $params['path'] = $this->uploadPath . $params['id'] . $params['extension'];
+        $params['path'] = $this->uploadPath . $params['id']->toString() . $params['extension'];
         $params['size'] = $file->getClientSize();
         $params['mime_type'] = $file->getClientMimeType();
 

@@ -10,5 +10,6 @@ return [
     'safe_name'     => 'Safe name',
     'size'          => 'Size',
     'path'          => 'Path',
+    'file_missing'  => 'File is missing...',
 
 ];
