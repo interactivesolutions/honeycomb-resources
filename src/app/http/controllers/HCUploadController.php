@@ -174,6 +174,19 @@ class HCUploadController
 
             file_put_contents($destination, file_get_contents($source));
 
+            $resource = HCResources::where('checksum', '=', hash_file('sha256', $destination))->first();
+
+            if ($resource)
+            {
+                if ($full)
+                    return $resource->toArray();
+
+                return [
+                    'id'  => $resource->id,
+                    'url' => route('resource.get', $resource->id),
+                ];
+            }
+
             if (!\File::exists($destination)) {
                 return null;
             }
