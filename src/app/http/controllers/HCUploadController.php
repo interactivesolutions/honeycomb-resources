@@ -26,9 +26,25 @@ class HCUploadController
      */
     private $resourceID;
 
-    public function __construct ()
+    /**
+     * @var bool
+     */
+    private $allowDuplicates;
+
+    /**
+     * Maximum file size to perform checksum calculation
+     */
+    const MAX_CHECKSUM_SIZE = 102400000;
+
+    /**
+     * HCUploadController constructor.
+     *
+     * @param bool $allowDuplicates - should the checksum be validated and duplicates found
+     */
+    public function __construct (bool $allowDuplicates = false)
     {
-        $this->uploadPath = 'uploads/' . date ("Y-m-d") . DIRECTORY_SEPARATOR;
+        $this->allowDuplicates = $allowDuplicates;
+        $this->uploadPath      = 'uploads/' . date ("Y-m-d") . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -52,10 +68,10 @@ class HCUploadController
 
             file_put_contents ($destination, file_get_contents ($source));
 
-            if (filesize ($destination) <= env ('MAX_CHECKSUM_SIZE', 102400000)) {
+            if (filesize ($destination) <= env ('MAX_CHECKSUM_SIZE', self::MAX_CHECKSUM_SIZE)) {
                 $resource = HCResources::where ('checksum', '=', hash_file ('sha256', $destination))->first ();
 
-                if ($resource) {
+                if (!$this->allowDuplicates && $resource) {
                     //If duplicate found deleting downloaded file
                     \File::delete ($destination);
 
@@ -136,7 +152,7 @@ class HCUploadController
             $this->saveResourceInStorage ($resource, $file);
 
             //Generating checksum
-            if ($resource['size'] <= env ('MAX_CHECKSUM_SIZE', 102400000))
+            if ($resource['size'] <= env ('MAX_CHECKSUM_SIZE', self::MAX_CHECKSUM_SIZE))
                 $resource->update (['checksum' => hash_file ('sha256', storage_path ('app/' . $resource['path']))]);
 
             Artisan::call ('hc:generate-thumbs', ['id' => $resource->id]);
@@ -186,11 +202,11 @@ class HCUploadController
         if ($this->resourceID)
             $params['id'] = $this->resourceID;
         else
-            $params['id'] = Uuid::uuid4 ();
+            $params['id'] = Uuid::uuid4 ()->toString ();
 
         $params['original_name'] = $file->getClientOriginalName ();
         $params['extension']     = '.' . $file->getClientOriginalExtension ();
-        $params['path']          = $this->uploadPath . $params['id']->toString () . $params['extension'];
+        $params['path']          = $this->uploadPath . $params['id'] . $params['extension'];
         $params['size']          = $file->getClientSize ();
         $params['mime_type']     = $file->getClientMimeType ();
 
