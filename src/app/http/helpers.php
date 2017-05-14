@@ -1,5 +1,6 @@
 <?php
 
+use interactivesolutions\honeycombresources\app\models\HCResources;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -88,5 +89,19 @@ if (!function_exists ('createImage')) {
         $image->save ($destination);
 
         return true;
+    }
+}
+
+if (!function_exists('getResourceOriginalName'))
+{
+    /**
+     * Getting resource name
+     *
+     * @param string $id
+     * @return string - original name of the resource
+     */
+    function getResourceOriginalName(string $id)
+    {
+        return HCResources::findOrFail($id)->original_name;
     }
 }
