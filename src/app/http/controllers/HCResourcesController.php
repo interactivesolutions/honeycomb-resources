@@ -303,4 +303,15 @@ class HCResourcesController extends HCBaseController
 
         exit;
     }
+
+    /**
+     * Function for streaming resource
+     *
+     * @param string $id
+     */
+    public function streamResource(string $id)
+    {
+        $stream = new HCVideoStream($id);
+        $stream->start();
+    }
 }
