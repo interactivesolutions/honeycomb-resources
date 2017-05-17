@@ -91,3 +91,17 @@ if (!function_exists ('createImage')) {
         return true;
     }
 }
+
+if (!function_exists('getResourceOriginalName'))
+{
+    /**
+     * Getting resource name
+     *
+     * @param string $id
+     * @return string - original name of the resource
+     */
+    function getResourceOriginalName(string $id)
+    {
+        return HCResources::findOrFail($id)->original_name;
+    }
+}

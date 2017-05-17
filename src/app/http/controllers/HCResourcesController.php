@@ -92,7 +92,7 @@ class HCResourcesController extends HCBaseController
         }
 
         if ($resource == null)
-            throw new \Exception('File is missing...');
+            throw new \Exception(trans('HCResources::resources.file_missing'));
 
         $uploadController = new HCUploadController();
         return $uploadController->upload($resource);
@@ -302,5 +302,16 @@ class HCResourcesController extends HCBaseController
         readfile($resource->path);
 
         exit;
+    }
+
+    /**
+     * Function for streaming resource
+     *
+     * @param string $id
+     */
+    public function streamResource(string $id)
+    {
+        $stream = new HCVideoStream($id);
+        $stream->start();
     }
 }

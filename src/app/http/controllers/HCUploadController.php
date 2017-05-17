@@ -26,9 +26,106 @@ class HCUploadController
      */
     private $resourceID;
 
-    public function __construct()
+    /**
+     * @var bool
+     */
+    private $allowDuplicates;
+
+    /**
+     * Maximum file size to perform checksum calculation
+     */
+    const MAX_CHECKSUM_SIZE = 102400000;
+
+    /**
+     * HCUploadController constructor.
+     *
+     * @param bool $allowDuplicates - should the checksum be validated and duplicates found
+     */
+    public function __construct (bool $allowDuplicates = false)
     {
-        $this->uploadPath = 'uploads/' . date("Y-m-d") . DIRECTORY_SEPARATOR;
+        $this->allowDuplicates = $allowDuplicates;
+        $this->uploadPath      = 'uploads/' . date ("Y-m-d") . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * Downloading and storing image in the system
+     *
+     * @param string $source
+     * @param bool $full - if set to true than return full resource data
+     * @param string $id
+     * @param null|string $mime_type
+     * @return mixed
+     */
+    public function downloadResource (string $source, bool $full = null, string $id = null, string $mime_type = null)
+    {
+        $this->createFolder ('uploads/tmp');
+
+        $fileName = $this->getFileName ($source);
+
+        if ($fileName && $fileName != '') {
+
+            $destination = storage_path ('app/uploads/tmp/' . $fileName);
+
+            file_put_contents ($destination, file_get_contents ($source));
+
+            if (filesize ($destination) <= env ('MAX_CHECKSUM_SIZE', self::MAX_CHECKSUM_SIZE)) {
+                $resource = HCResources::where ('checksum', '=', hash_file ('sha256', $destination))->first ();
+
+                if (!$this->allowDuplicates && $resource) {
+                    //If duplicate found deleting downloaded file
+                    \File::delete ($destination);
+
+                    if ($full)
+                        return $resource->toArray ();
+
+                    return [
+                        'id'  => $resource->id,
+                        'url' => route ('resource.get', $resource->id),
+                    ];
+                }
+            }
+
+            if (!\File::exists ($destination)) {
+                return null;
+            }
+
+            if (!$mime_type)
+                $mime_type = mime_content_type ($destination);
+
+            $file = new UploadedFile($destination, $fileName, $mime_type, filesize ($destination), null, true);
+
+            return $this->upload ($file, $full, $id);
+        }
+
+        return null;
+    }
+
+    /**
+     * Create folder
+     * @param $path
+     */
+    protected function createFolder (string $path)
+    {
+        if (!Storage::exists ($path))
+            Storage::makeDirectory ($path);
+    }
+
+    /**
+     * Retrieving file name
+     *
+     * @param $fileName
+     * @return mixed
+     */
+    protected function getFileName (string $fileName)
+    {
+        if (!$fileName && filter_var ($fileName, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $explodeFileURL = explode ('/', $fileName);
+        $fileName       = end ($explodeFileURL);
+
+        return sanitizeString (pathinfo ($fileName, PATHINFO_FILENAME)) . '.' . pathinfo ($fileName, PATHINFO_EXTENSION);
     }
 
     /**
@@ -41,38 +138,41 @@ class HCUploadController
      * @return mixed
      * @throws \Exception
      */
-    public function upload(UploadedFile $file, bool $full = null, string $id = null)
+    public function upload (UploadedFile $file, bool $full = null, string $id = null)
     {
-        if (is_null($file))
-            return HCLog::info('R-UPLOAD-001', trans('resources::resources.errors.no_resource_selected'));
+        if (is_null ($file))
+            return HCLog::info ('R-UPLOAD-001', trans ('resources::resources.errors.no_resource_selected'));
 
-        DB::beginTransaction();
+        DB::beginTransaction ();
 
         $this->resourceID = $id;
 
         try {
-            $resource = $this->createResourceRecord($file);
-            $this->saveResourceInStorage($resource, $file);
+            $resource = $this->createResourceRecord ($file);
+            $this->saveResourceInStorage ($resource, $file);
 
-            Artisan::call('hc:generate-thumbs', ['id' => $resource->id]);
+            //Generating checksum
+            if ($resource['size'] <= env ('MAX_CHECKSUM_SIZE', self::MAX_CHECKSUM_SIZE))
+                $resource->update (['checksum' => hash_file ('sha256', storage_path ('app/' . $resource['path']))]);
+
+            Artisan::call ('hc:generate-thumbs', ['id' => $resource->id]);
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::rollback ();
 
-            if (isset($resource)) {
-                $this->removeImageFromStorage($resource);
-            }
+            if (isset($resource))
+                $this->removeImageFromStorage ($resource);
 
             throw new \Exception($e);
         }
 
-        DB::commit();
+        DB::commit ();
 
         if ($full)
-            return $resource->toArray();
+            return $resource->toArray ();
 
         return [
             'id'  => $resource->id,
-            'url' => route('resource.get', $resource->id),
+            'url' => route ('resource.get', $resource->id),
         ];
     }
 
@@ -82,10 +182,10 @@ class HCUploadController
      * @param $file
      * @return HCResources
      */
-    protected function createResourceRecord(UploadedFile $file)
+    protected function createResourceRecord (UploadedFile $file)
     {
-        return HCResources::create(
-            $this->getFileParams($file)
+        return HCResources::create (
+            $this->getFileParams ($file)
         );
     }
 
@@ -95,20 +195,20 @@ class HCUploadController
      * @param $file
      * @return array
      */
-    public function getFileParams(UploadedFile $file)
+    public function getFileParams (UploadedFile $file)
     {
         $params = [];
 
         if ($this->resourceID)
             $params['id'] = $this->resourceID;
         else
-            $params['id'] = Uuid::uuid4();
+            $params['id'] = Uuid::uuid4 ()->toString ();
 
-        $params['original_name'] = $file->getClientOriginalName();
-        $params['extension'] = '.' . $file->getClientOriginalExtension();
-        $params['path'] = $this->uploadPath . $params['id'] . $params['extension'];
-        $params['size'] = $file->getClientSize();
-        $params['mime_type'] = $file->getClientMimeType();
+        $params['original_name'] = $file->getClientOriginalName ();
+        $params['extension']     = '.' . $file->getClientOriginalExtension ();
+        $params['path']          = $this->uploadPath . $params['id'] . $params['extension'];
+        $params['size']          = $file->getClientSize ();
+        $params['mime_type']     = $file->getClientMimeType ();
 
         return $params;
     }
@@ -120,20 +220,10 @@ class HCUploadController
      * @param $file
      * @return mixed
      */
-    protected function saveResourceInStorage(HCResources $resource, UploadedFile $file)
+    protected function saveResourceInStorage (HCResources $resource, UploadedFile $file)
     {
-        $this->createFolder($this->uploadPath);
-        $file->move(storage_path('app/' . $this->uploadPath), $resource->id . '.' . $file->getClientOriginalExtension());
-    }
-
-    /**
-     * Create folder
-     * @param $path
-     */
-    protected function createFolder(string $path)
-    {
-        if (!Storage::exists($path))
-            Storage::makeDirectory($path);
+        $this->createFolder ($this->uploadPath);
+        $file->move (storage_path ('app/' . $this->uploadPath), $resource->id . '.' . $file->getClientOriginalExtension ());
     }
 
     /**
@@ -141,66 +231,12 @@ class HCUploadController
      *
      * @param $resource
      */
-    protected function removeImageFromStorage(HCResources $resource)
+    protected function removeImageFromStorage (HCResources $resource)
     {
         $path = $this->uploadPath . $resource->id;
 
-        if (Storage::has($path)) {
-            Storage::delete($path);
+        if (Storage::has ($path)) {
+            Storage::delete ($path);
         }
-    }
-
-    /**
-     * Downloading and storing image in the system
-     *
-     * @param string $source
-     * @param bool $full - if set to true than return full resource data
-     * @param string $id
-     * @param null|string $mime_type
-     * @return mixed
-     */
-    public function downloadResource(string $source, bool $full = null, string $id = null, string $mime_type = null)
-    {
-        $this->createFolder('uploads/tmp');
-
-        $fileName = $this->getFileName($source);
-
-        if ($fileName && $fileName != '') {
-
-            $destination = storage_path('app/uploads/tmp/' . $fileName);
-
-            file_put_contents($destination, file_get_contents($source));
-
-            if (!\File::exists($destination)) {
-                return null;
-            }
-
-            if (!$mime_type)
-                $mime_type = mime_content_type($destination);
-
-            $file = new UploadedFile($destination, $fileName, $mime_type, filesize($destination), null, true);
-
-            return $this->upload($file, $full, $id);
-        }
-        
-        return null;
-    }
-
-    /**
-     * Retrieving file name
-     *
-     * @param $fileName
-     * @return mixed
-     */
-    protected function getFileName(string $fileName)
-    {
-        if (!$fileName && filter_var($fileName, FILTER_VALIDATE_URL) === false) {
-            return null;
-        }
-
-        $explodeFileURL = explode('/', $fileName);
-        $fileName = end($explodeFileURL);
-
-        return sanitizeString(pathinfo($fileName, PATHINFO_FILENAME)) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
     }
 }
