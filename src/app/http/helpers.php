@@ -1,5 +1,6 @@
 <?php
 
+use interactivesolutions\honeycombresources\app\models\HCResources;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic as Image;
 
