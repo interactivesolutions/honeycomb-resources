@@ -16,7 +16,7 @@ class HCResourcesController extends HCBaseController
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function adminView()
+    public function adminIndex()
     {
         $config = [
             'title'       => trans('HCResources::resources.page_title'),
@@ -27,18 +27,18 @@ class HCResourcesController extends HCBaseController
             'headers'     => $this->getAdminListHeader(),
         ];
 
-        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_create'))
+        if (auth()->user()->can('interactivesolutions_honeycomb_resources_resources_create'))
             $config['actions'][] = 'new';
 
-        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_update')) {
+        if (auth()->user()->can('interactivesolutions_honeycomb_resources_resources_update')) {
             $config['actions'][] = 'update';
             $config['actions'][] = 'restore';
         }
 
-        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_delete'))
+        if (auth()->user()->can('interactivesolutions_honeycomb_resources_resources_delete'))
             $config['actions'][] = 'delete';
 
-        if ($this->user()->can('interactivesolutions_honeycomb_resources_resources_search'))
+        if (auth()->user()->can('interactivesolutions_honeycomb_resources_resources_search'))
             $config['actions'][] = 'search';
 
         return view('HCCoreUI::admin.content.list', ['config' => $config]);
@@ -83,7 +83,7 @@ class HCResourcesController extends HCBaseController
      * @return mixed
      * @throws \Exception
      */
-    protected function __create(array $data = null)
+    protected function __apiStore(array $data = null)
     {
         if (is_null($data)) {
             $resource = request()->file('file');
@@ -104,7 +104,7 @@ class HCResourcesController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    protected function __update(string $id)
+    protected function __apiUpdate(string $id)
     {
         $record = HCResources::findOrFail($id);
 
@@ -112,7 +112,7 @@ class HCResourcesController extends HCBaseController
 
         $record->update(array_get($data, 'record'));
 
-        return $this->getSingleRecord($record->id);
+        return $this->apiShow($record->id);
     }
 
     /**
@@ -121,7 +121,7 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __delete(array $list)
+    protected function __apiDestroy(array $list)
     {
         HCResources::destroy($list);
     }
@@ -132,7 +132,7 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __forceDelete(array $list)
+    protected function __apiForceDelete(array $list)
     {
         HCResources::onlyTrashed()->whereIn('id', $list)->forceDelete();
     }
@@ -143,7 +143,7 @@ class HCResourcesController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __restore(array $list)
+    protected function __apiRestore(array $list)
     {
         HCResources::whereIn('id', $list)->restore();
     }
@@ -154,7 +154,7 @@ class HCResourcesController extends HCBaseController
      * @param array $select
      * @return mixed
      */
-    public function createQuery(array $select = null)
+    protected function createQuery(array $select = null)
     {
         $with = [];
 
@@ -171,7 +171,7 @@ class HCResourcesController extends HCBaseController
         $list = $this->checkForDeleted($list);
 
         // add search items
-        $list = $this->listSearch($list);
+        $list = $this->search($list);
 
         // ordering data
         $list = $this->orderData($list, $select);
@@ -225,7 +225,7 @@ class HCResourcesController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    public function getSingleRecord(string $id)
+    public function apiShow(string $id)
     {
         $with = [];
 

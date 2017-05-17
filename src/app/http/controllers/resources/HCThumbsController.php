@@ -14,7 +14,7 @@ class HCThumbsController extends HCBaseController
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function adminView ()
+    public function adminIndex ()
     {
         $config = [
             'title'       => trans ('HCResources::resources_thumbs.page_title'),
@@ -25,18 +25,18 @@ class HCThumbsController extends HCBaseController
             'headers'     => $this->getAdminListHeader (),
         ];
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_create'))
+        if (auth()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_create'))
             $config['actions'][] = 'new';
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_update')) {
+        if (auth()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_update')) {
             $config['actions'][] = 'update';
             $config['actions'][] = 'restore';
         }
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_delete'))
+        if (auth()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_delete'))
             $config['actions'][] = 'delete';
 
-        if ($this->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_search'))
+        if (auth()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_search'))
             $config['actions'][] = 'search';
 
         return view ('HCCoreUI::admin.content.list', ['config' => $config]);
@@ -80,14 +80,14 @@ class HCThumbsController extends HCBaseController
      * @param null $data
      * @return mixed
      */
-    protected function __create (array $data = null)
+    protected function __apiStore (array $data = null)
     {
         if (is_null ($data))
             $data = $this->getInputData ();
 
         $record = HCThumbs::create (array_get ($data, 'record'));
 
-        return $this->getSingleRecord ($record->id);
+        return $this->apiShow ($record->id);
     }
 
     /**
@@ -96,7 +96,7 @@ class HCThumbsController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    protected function __update (string $id)
+    protected function __apiUpdate (string $id)
     {
         $record = HCThumbs::findOrFail ($id);
 
@@ -104,7 +104,7 @@ class HCThumbsController extends HCBaseController
 
         $record->update (array_get ($data, 'record'));
 
-        return $this->getSingleRecord ($record->id);
+        return $this->apiShow ($record->id);
     }
 
     /**
@@ -113,7 +113,7 @@ class HCThumbsController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __delete (array $list)
+    protected function __apiDestroy (array $list)
     {
         HCThumbs::destroy ($list);
     }
@@ -124,7 +124,7 @@ class HCThumbsController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __forceDelete (array $list)
+    protected function __apiForceDelete (array $list)
     {
         HCThumbs::onlyTrashed ()->whereIn ('id', $list)->forceDelete ();
     }
@@ -135,7 +135,7 @@ class HCThumbsController extends HCBaseController
      * @param $list
      * @return mixed|void
      */
-    protected function __restore (array $list)
+    protected function __apiRestore (array $list)
     {
         HCThumbs::whereIn ('id', $list)->restore ();
     }
@@ -146,7 +146,7 @@ class HCThumbsController extends HCBaseController
      * @param array $select
      * @return mixed
      */
-    public function createQuery(array $select = null)
+    protected function createQuery(array $select = null)
     {
         $with = [];
 
@@ -163,7 +163,7 @@ class HCThumbsController extends HCBaseController
         $list = $this->checkForDeleted($list);
 
         // add search items
-        $list = $this->listSearch($list);
+        $list = $this->search($list);
 
         // ordering data
         $list = $this->orderData($list, $select);
@@ -178,7 +178,7 @@ class HCThumbsController extends HCBaseController
      * @param $list
      * @return mixed
      */
-    protected function listSearch (Builder $list)
+    protected function searchQuery (Builder $list)
     {
         if (request ()->has ('q')) {
             $parameter = request ()->input ('q');
@@ -221,7 +221,7 @@ class HCThumbsController extends HCBaseController
      * @param $id
      * @return mixed
      */
-    public function getSingleRecord (string $id)
+    public function apiShow (string $id)
     {
         $with = [];
 
