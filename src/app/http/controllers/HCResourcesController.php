@@ -1,5 +1,7 @@
 <?php namespace interactivesolutions\honeycombresources\app\http\controllers;
 
+use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -121,6 +123,50 @@ class HCResourcesController extends HCBaseController
                     } else
                         $resource->path = $storagePath . $resource->path;
                     break;
+
+                case 'video/mp4' :
+
+                    $cachePath = generateResourceCacheLocation ($resource->id, $width, $height, $fit) . '.jpg';
+
+                    if (file_exists ($cachePath)) {
+                        $resource->size      = File::size ($cachePath);
+                        $resource->path      = $cachePath;
+                        $resource->mime_type = 'image/jpg';
+                    } else {
+
+                        if ($width != 0 && $height != 0) {
+
+                            $videoPreview = storage_path ('video-previews/' . $resource->id . '.jpg');
+
+                            if (!file_exists ($videoPreview)) {
+
+                                $videoPath = storage_path ('app/' . $resource->path);
+
+                                $ffmpeg = FFMpeg::create ([
+                                                              'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
+                                                              'ffprobe.binaries' => '/usr/bin/ffprobe',
+                                                              'timeout'          => 3600, // The timeout for the underlying process
+                                                              'ffmpeg.threads'   => 12,   // The number of threads that FFMpeg should use
+                                                          ]);
+
+                                $video    = $ffmpeg->open (storage_path ('app/' . $resource->path));
+                                $duration = $video->getFFProbe ()->format ($videoPath)->get ('duration');
+
+                                $video->frame (TimeCode::fromSeconds (rand (1, $duration)))
+                                      ->save ($videoPreview);
+
+                                $resource->mime_type = 'image/jpg';
+                                $resource->path      = $videoPreview;
+                            }
+
+                            createImage ($videoPreview, $cachePath, $width, $height, $fit);
+
+                            $resource->size      = File::size ($cachePath);
+                            $resource->path      = $cachePath;
+                            $resource->mime_type = 'image/jpg';
+                        } else
+                            $resource->path = $storagePath . $resource->path;
+                    }
 
                 default:
 
