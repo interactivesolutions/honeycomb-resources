@@ -28,6 +28,7 @@
         "php": ">=7.0.0",
         "laravel/framework": "5.3.*",
         "intervention/image": "^2.3",
+        "php-ffmpeg/php-ffmpeg": "^0.9.3",
         "interactivesolutions/honeycomb-scripts":"~0.2.0"
     },
     "autoload": {
