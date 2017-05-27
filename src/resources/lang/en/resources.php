@@ -11,5 +11,6 @@ return [
     'size'          => 'Size',
     'path'          => 'Path',
     'file_missing'  => 'File is missing...',
+    'preview'       => 'Preview',
 
 ];

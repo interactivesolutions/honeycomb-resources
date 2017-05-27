@@ -32,16 +32,13 @@ class HCResourcesController extends HCBaseController
         if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_create'))
             $config['actions'][] = 'new';
 
-        if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_update')) {
-            $config['actions'][] = 'update';
+        if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_update'))
             $config['actions'][] = 'restore';
-        }
 
         if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_delete'))
             $config['actions'][] = 'delete';
 
-        if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_search'))
-            $config['actions'][] = 'search';
+        $config['actions'][] = 'search';
 
         return view ('HCCoreUI::admin.content.list', ['config' => $config]);
     }
@@ -54,25 +51,27 @@ class HCResourcesController extends HCBaseController
     public function getAdminListHeader ()
     {
         return [
-            'original_name' => [
+            'original_name'    => [
                 "type"  => "text",
                 "label" => trans ('HCResources::resources.original_name'),
             ],
-            'id'            => [
-                "type"    => "image",
-                "label"   => trans ('HCResources::resources.dsaflhsalk'),
-                "options" => [
-                    "w" => 100,
-                    "h" => 100,
-                ],
+            'id'               => [
+                "type"  => "image",
+                "label" => trans ('HCResources::resources.preview'),
             ],
-            'size'          => [
+            'size'             => [
                 "type"  => "text",
                 "label" => trans ('HCResources::resources.size'),
             ],
-            'path'          => [
+            'path'             => [
                 "type"  => "text",
                 "label" => trans ('HCResources::resources.path'),
+            ],
+            'preview_generate' => [
+                "type"  => "silent-button",
+                "label" => trans ('HCResources::resources.regenerate'),
+                "url"   => route('admin.api.resources.regenerate', 'id'),
+                "refresh" => true
             ],
 
         ];
@@ -126,7 +125,10 @@ class HCResourcesController extends HCBaseController
 
                 case 'video/mp4' :
 
-                    $cachePath = generateResourceCacheLocation ($resource->id, $width, $height, $fit) . '.jpg';
+                    $previewPath     = str_replace ('-', '/', $resource->id);
+                    $fullPreviewPath = $storagePath . 'video-previews/' . $previewPath;
+
+                    $cachePath = generateResourceCacheLocation ($previewPath, $width, $height, $fit) . '.jpg';
 
                     if (file_exists ($cachePath)) {
                         $resource->size      = File::size ($cachePath);
@@ -136,28 +138,10 @@ class HCResourcesController extends HCBaseController
 
                         if ($width != 0 && $height != 0) {
 
-                            $videoPreview = storage_path ('video-previews/' . $resource->id . '.jpg');
+                            $videoPreview = $fullPreviewPath . '/preview_frame.jpg';
 
-                            if (!file_exists ($videoPreview)) {
-
-                                $videoPath = storage_path ('app/' . $resource->path);
-
-                                $ffmpeg = FFMpeg::create ([
-                                                              'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
-                                                              'ffprobe.binaries' => '/usr/bin/ffprobe',
-                                                              'timeout'          => 3600, // The timeout for the underlying process
-                                                              'ffmpeg.threads'   => 12,   // The number of threads that FFMpeg should use
-                                                          ]);
-
-                                $video    = $ffmpeg->open (storage_path ('app/' . $resource->path));
-                                $duration = $video->getFFProbe ()->format ($videoPath)->get ('duration');
-
-                                $video->frame (TimeCode::fromSeconds (rand (1, $duration)))
-                                      ->save ($videoPreview);
-
-                                $resource->mime_type = 'image/jpg';
-                                $resource->path      = $videoPreview;
-                            }
+                            //TODO: generate 3-5 previews and take the one with largest size
+                            $this->generateVideoPreview ($resource, $storagePath, $previewPath);
 
                             createImage ($videoPreview, $cachePath, $width, $height, $fit);
 
@@ -186,6 +170,70 @@ class HCResourcesController extends HCBaseController
         readfile ($resource->path);
 
         exit;
+    }
+
+    /**
+     * generating video preview
+     *
+     * @param HCResources $resource
+     * @param string $storagePath
+     * @param string $previewPath
+     */
+    private function generateVideoPreview (HCResources $resource, string $storagePath, string $previewPath)
+    {
+        $fullPreviewPath = $storagePath . 'video-previews/' . $previewPath;
+
+        if (!file_exists ($fullPreviewPath))
+            mkdir ($fullPreviewPath, 0755, true);
+
+        $videoPreview = $fullPreviewPath . '/preview_frame.jpg';
+
+        if (!file_exists ($videoPreview)) {
+
+            $videoPath = $storagePath . $resource->path;
+
+            $ffmpeg = FFMpeg::create ([
+                                          'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
+                                          'ffprobe.binaries' => '/usr/bin/ffprobe',
+                                          'timeout'          => 3600, // The timeout for the underlying process
+                                          'ffmpeg.threads'   => 12,   // The number of threads that FFMpeg should use
+                                      ]);
+
+            $video    = $ffmpeg->open ($storagePath . $resource->path);
+            $duration = $video->getFFProbe ()->format ($videoPath)->get ('duration');
+
+            $video->frame (TimeCode::fromSeconds (rand (1, $duration)))
+                  ->save ($videoPreview);
+
+            $resource->mime_type = 'image/jpg';
+            $resource->path      = $videoPreview;
+        }
+    }
+
+    /**
+     * Regenerating video preview
+     *
+     * @param string $id
+     * @return array
+     */
+    public function regenerateVideoPreview (string $id)
+    {
+        $resource = HCResources::findOrFail ($id);
+
+        //TODO check if resource is video
+
+        $storagePath = storage_path ('app/');
+        $previewPath = str_replace ('-', '/', $resource->id);
+
+        if (file_exists($storagePath . 'video-previews/'. $previewPath))
+            removeDirectory ($storagePath . 'video-previews/'. $previewPath);
+
+        if (file_exists($storagePath . 'cache/' . $previewPath))
+            removeDirectory ($storagePath  . 'cache/' . $previewPath);
+
+        $this->generateVideoPreview ($resource, $storagePath, $previewPath);
+
+        return ["success" => true];
     }
 
     /**
@@ -348,7 +396,7 @@ class HCResourcesController extends HCBaseController
      * @param string $phrase
      * @return Builder
      */
-    protected function searchQuery(Builder $query, string $phrase)
+    protected function searchQuery (Builder $query, string $phrase)
     {
         return $query->where (function (Builder $query) use ($phrase) {
             $query->where ('original_name', 'LIKE', '%' . $phrase . '%')

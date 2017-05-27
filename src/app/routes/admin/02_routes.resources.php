@@ -20,9 +20,11 @@ Route::group (['prefix' => env('HC_ADMIN_URL'), 'middleware' => ['web', 'auth']]
             Route::put ('/', ['middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_update'], 'uses' => 'HCResourcesController@apiUpdate']);
             Route::delete ('/', ['middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_delete'], 'uses' => 'HCResourcesController@apiDestroy']);
 
+            Route::get('regenerate', ['as' => 'admin.api.resources.regenerate', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_update'], 'uses' => 'HCResourcesController@regenerateVideoPreview']);
             Route::post ('strict', ['as' => 'admin.api.resources.update.strict', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_update'], 'uses' => 'HCResourcesController@apiUpdateStrict']);
             Route::post ('duplicate', ['as' => 'admin.api.resources.duplicate', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_create'], 'uses' => 'HCResourcesController@apiDuplicate']);
             Route::delete ('force', ['as' => 'admin.api.resources.force', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_force_delete'], 'uses' => 'HCResourcesController@apiForceDelete']);
         });
+
     });
 });
