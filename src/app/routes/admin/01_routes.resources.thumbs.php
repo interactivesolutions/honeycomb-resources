@@ -16,7 +16,7 @@ Route::group(['prefix' => env('HC_ADMIN_URL'), 'middleware' => ['web', 'auth']],
 
         Route::group(['prefix' => '{id}'], function ()
         {
-            Route::get('/id', ['as' => 'admin.api.resources.thumbs.single', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@apiShow']);
+            Route::get('/', ['as' => 'admin.api.resources.thumbs.single', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@apiShow']);
             Route::put('/', ['middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_update'], 'uses' => 'resources\\HCThumbsController@apiUpdate']);
             Route::delete('/', ['middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_delete'], 'uses' => 'resources\\HCThumbsController@apiDestroy']);
 
