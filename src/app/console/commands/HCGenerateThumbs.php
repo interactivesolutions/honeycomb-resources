@@ -58,9 +58,10 @@ class HCGenerateThumbs extends HCCommand
             throw new \Exception('Resource not found: ' . $id);
 
         $thumbRules = HCThumbs::where ('global', 1)->get ();
+        $dest = implode('/', str_split(str_pad($resource->count, 9, '0', STR_PAD_LEFT), 3)) . '/';
 
         foreach ($thumbRules as $rule) {
-            $destination = generateResourcePublicLocation ($id, $rule->width, $rule->height, $rule->fit) . $resource->extension;
+            $destination = generateResourcePublicLocation ($dest, $rule->width, $rule->height, $rule->fit) . $resource->extension;
             createImage (storage_path ('app/') . $resource->path, $destination, $rule->width, $rule->height, $rule->fit);
         }
     }
