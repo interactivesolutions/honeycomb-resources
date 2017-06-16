@@ -10,6 +10,7 @@ Route::group (['prefix' => config('hc.admin_url'), 'middleware' => ['web', 'auth
         Route::post ('/', ['middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_create'], 'uses' => 'HCResourcesController@apiStore']);
         Route::delete ('/', ['middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_delete'], 'uses' => 'HCResourcesController@apiDestroy']);
 
+        Route::get('list', ['as' => 'admin.api.resources.list', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@apiIndex']);
         Route::post ('restore', ['as' => 'admin.api.resources.restore', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_update'], 'uses' => 'HCResourcesController@apiRestore']);
         Route::post ('merge', ['as' => 'admin.api.resources.merge', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_create', 'acl:interactivesolutions_honeycomb_resources_resources_update'], 'uses' => 'HCResourcesController@apiMerge']);
         Route::delete ('force', ['as' => 'admin.api.resources.force.multi', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_force_delete'], 'uses' => 'HCResourcesController@apiForceDelete']);
