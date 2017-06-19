@@ -2,7 +2,7 @@
 
 Route::group(['prefix' => config('hc.admin_url'), 'middleware' => ['web', 'auth']], function ()
 {
-    Route::get('resources/thumbs', ['as' => 'admin.resources.thumbs', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@adminIndex']);
+    Route::get('resources/thumbs', ['as' => 'admin.resources.thumbs.index', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_thumbs_list'], 'uses' => 'resources\\HCThumbsController@adminIndex']);
 
     Route::group(['prefix' => 'api/resources/thumbs'], function ()
     {

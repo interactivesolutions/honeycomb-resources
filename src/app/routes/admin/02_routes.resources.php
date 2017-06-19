@@ -2,7 +2,7 @@
 
 Route::group (['prefix' => config('hc.admin_url'), 'middleware' => ['web', 'auth']], function ()
 {
-    Route::get ('resources', ['as' => 'admin.resources', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@adminIndex']);
+    Route::get ('resources', ['as' => 'admin.resources.index', 'middleware' => ['acl:interactivesolutions_honeycomb_resources_resources_list'], 'uses' => 'HCResourcesController@adminIndex']);
 
     Route::group (['prefix' => 'api/resources'], function ()
     {
