@@ -8,17 +8,15 @@
   },
   "adminMenu": [
     {
-      "path": "admin\/resources",
       "route": "admin.resources.index",
-      "parent": "admin/hc",
+      "parent": "admin.index",
       "translation": "HCResources::resources.page_title",
       "icon": "file-image-o",
       "aclPermission": "interactivesolutions_honeycomb_resources_resources_list"
     },
     {
-      "path": "admin\/resources\/thumbs",
       "route": "admin.resources.thumbs.index",
-      "parent": "admin/resources",
+      "parent": "admin.resources.index",
       "translation": "HCResources::resources_thumbs.page_title",
       "icon": "fa-cogs",
       "aclPermission": "interactivesolutions_honeycomb_resources_resources_thumbs_list"
