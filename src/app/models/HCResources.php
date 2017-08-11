@@ -20,4 +20,14 @@ class HCResources extends HCUuidModel
      */
     protected $fillable = ['id', 'original_name', 'size', 'path', 'mime_type', 'extension', 'checksum'];
 
+    /**
+     * Get file path of the resource
+     *
+     * @return string
+     */
+    public function file_path()
+    {
+        return storage_path('app' . DIRECTORY_SEPARATOR . $this->path);
+    }
+
 }
