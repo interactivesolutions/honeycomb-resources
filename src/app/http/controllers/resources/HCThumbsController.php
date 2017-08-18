@@ -24,8 +24,8 @@ class HCThumbsController extends HCBaseController
             'headers'     => $this->getAdminListHeader (),
         ];
 
-        if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_create'))
-            $config['actions'][] = 'new';
+//        if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_create'))
+//            $config['actions'][] = 'new';
 
         if (auth ()->user ()->can ('interactivesolutions_honeycomb_resources_resources_thumbs_update')) {
             $config['actions'][] = 'update';

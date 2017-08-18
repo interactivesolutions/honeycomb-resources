@@ -1,10 +1,11 @@
 <?php
 
 use interactivesolutions\honeycombresources\app\models\HCResources;
+use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic as Image;
 
-if (!function_exists ('generateResourceCacheLocation')) {
+if( ! function_exists('generateResourceCacheLocation') ) {
 
     /**
      * Generating resource cache location and name
@@ -15,21 +16,23 @@ if (!function_exists ('generateResourceCacheLocation')) {
      * @param null $fit
      * @return mixed
      */
-    function generateResourceCacheLocation ($id, $width = 0, $height = 0, $fit = null)
+    function generateResourceCacheLocation($id, $width = 0, $height = 0, $fit = null)
     {
-        $path = storage_path ('app/') . 'cache/' . str_replace ('-', '/', $id) . '/';
+        $path = storage_path('app/') . 'cache/' . str_replace('-', '/', $id) . '/';
 
-        if (!is_dir ($path))
-            mkdir ($path, 0755, true);
+        if( ! is_dir($path) )
+            mkdir($path, 0755, true);
 
         $path .= $width . '_' . $height;
 
-        if ($fit)
+        if( $fit )
             $path .= '_fit';
 
         return $path;
     }
+}
 
+if( ! function_exists('generateResourcePublicLocation') ) {
     /**
      * Generating resource public location and name
      *
@@ -39,23 +42,59 @@ if (!function_exists ('generateResourceCacheLocation')) {
      * @param null $fit
      * @return mixed
      */
-    function generateResourcePublicLocation ($id, $width = 0, $height = 0, $fit = null)
+    function generateResourcePublicLocation($id, $width = 0, $height = 0, $fit = null)
     {
-        $path = public_path ('thumbs/') . str_replace ('-', '/', $id) . '/';
+        $path = public_path('thumbs/') . str_replace('-', '/', $id) . '/';
 
-        if (!is_dir ($path))
-            mkdir ($path, 0755, true);
+        if( ! is_dir($path) )
+            mkdir($path, 0755, true);
 
         $path .= $width . '_' . $height;
 
-        if ($fit)
+        if( $fit )
             $path .= '_fit';
 
         return $path;
     }
 }
 
-if (!function_exists ('createImage')) {
+if( ! function_exists('getThumbUrl') ) {
+    /**
+     * Get public url of resource id and thumb
+     *
+     * @param $resourceId
+     * @param $thumb
+     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     */
+    function getThumbUrl($resourceId, $thumb)
+    {
+        $thumbName = getThumbName($thumb);
+
+        return url("storage/thumbs/$thumbName/$resourceId.jpg");
+    }
+}
+
+if( ! function_exists('getThumbName') ) {
+
+    /**
+     * Get thumb name by given thumb instance
+     *
+     * @param HCThumbs $thumb
+     * @return string
+     */
+    function getThumbName(HCThumbs $thumb)
+    {
+        $name = sprintf("%s_%s", $thumb->width, $thumb->height);
+
+        if( $thumb->fit ) {
+            $name .= '_fit';
+        }
+
+        return $name;
+    }
+}
+
+if( ! function_exists('createImage') ) {
     /**
      * Creating image based on provided data
      *
@@ -66,34 +105,33 @@ if (!function_exists ('createImage')) {
      * @param bool $fit
      * @return bool
      */
-    function createImage ($source, $destination, $width = 0, $height = 0, $fit = false)
+    function createImage($source, $destination, $width = 0, $height = 0, $fit = false)
     {
-        if ($width == 0)
+        if( $width == 0 )
             $width = null;
 
-        if ($height == 0)
+        if( $height == 0 )
             $height = null;
 
-        $image = Image::make ($source);
+        $image = Image::make($source);
 
-        if ($fit)
-            $image->fit ($width, $height, function (Constraint $constraint) {
-                $constraint->upsize ();
+        if( $fit )
+            $image->fit($width, $height, function (Constraint $constraint) {
+                $constraint->upsize();
             });
         else
-            $image->resize ($width, $height, function (Constraint $constraint) {
-                $constraint->upsize ();
-                $constraint->aspectRatio ();
+            $image->resize($width, $height, function (Constraint $constraint) {
+                $constraint->upsize();
+                $constraint->aspectRatio();
             });
 
-        $image->save ($destination);
+        $image->save($destination);
 
         return true;
     }
 }
 
-if (!function_exists('getResourceOriginalName'))
-{
+if( ! function_exists('getResourceOriginalName') ) {
     /**
      * Getting resource name
      *

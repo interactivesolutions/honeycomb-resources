@@ -3,6 +3,7 @@
 namespace interactivesolutions\honeycombresources\app\models;
 
 use interactivesolutions\honeycombcore\models\HCUuidModel;
+use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 
 class HCResources extends HCUuidModel
 {
@@ -28,6 +29,27 @@ class HCResources extends HCUuidModel
     public function file_path()
     {
         return storage_path('app' . DIRECTORY_SEPARATOR . $this->path);
+    }
+
+    /**
+     * Check if resource is image
+     *
+     * @return bool
+     */
+    public function isImage()
+    {
+        return strpos($this->mime_type, 'image') !== false;
+    }
+
+    /**
+     * Get thumb url by thumb
+     *
+     * @param HCThumbs $thumb
+     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     */
+    public function getThumbUrl(HCThumbs $thumb)
+    {
+        return getThumbUrl($this->id, $thumb);
     }
 
 }
