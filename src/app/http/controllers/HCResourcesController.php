@@ -93,7 +93,10 @@ class HCResourcesController extends HCBaseController
         if (is_null ($id))
             return HCLog::error ('R-001', trans ('resources::resources.errors.resource_id_missing'));
 
-        $resource = HCResources::find ($id);
+        // cache resource for 10 days
+        $resource = \Cache::remember($id, 14400, function () use ($id) {
+            return HCResources::find ($id);
+        });
 
         if (!$resource)
             return HCLog::error ('R-003', trans ('resources::resources.errors.resource_not_found'));
@@ -193,17 +196,17 @@ class HCResourcesController extends HCBaseController
             $videoPath = $storagePath . $resource->path;
 
             $ffmpeg = FFMpeg::create ([
-                                          'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
-                                          'ffprobe.binaries' => '/usr/bin/ffprobe',
-                                          'timeout'          => 3600, // The timeout for the underlying process
-                                          'ffmpeg.threads'   => 12,   // The number of threads that FFMpeg should use
-                                      ]);
+                'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
+                'ffprobe.binaries' => '/usr/bin/ffprobe',
+                'timeout'          => 3600, // The timeout for the underlying process
+                'ffmpeg.threads'   => 12,   // The number of threads that FFMpeg should use
+            ]);
 
             $video    = $ffmpeg->open ($storagePath . $resource->path);
             $duration = $video->getFFProbe ()->format ($videoPath)->get ('duration');
 
             $video->frame (TimeCode::fromSeconds (rand (1, $duration)))
-                  ->save ($videoPreview);
+                ->save ($videoPreview);
 
             $resource->mime_type = 'image/jpg';
             $resource->path      = $videoPreview;
@@ -319,9 +322,9 @@ class HCResourcesController extends HCBaseController
         $select = HCResources::getFillableFields ();
 
         $record = HCResources::with ($with)
-                             ->select ($select)
-                             ->where ('id', $id)
-                             ->firstOrFail ();
+            ->select ($select)
+            ->where ('id', $id)
+            ->firstOrFail ();
 
         return $record;
     }
@@ -380,7 +383,7 @@ class HCResourcesController extends HCBaseController
 
         $list = HCResources::with ($with)->select ($select)
             // add filters
-                           ->where (function ($query) use ($select) {
+            ->where (function ($query) use ($select) {
                 $query = $this->getRequestParameters ($query, $select);
             });
 
@@ -406,9 +409,9 @@ class HCResourcesController extends HCBaseController
     {
         return $query->where (function (Builder $query) use ($phrase) {
             $query->where ('original_name', 'LIKE', '%' . $phrase . '%')
-                  ->orWhere ('size', 'LIKE', '%' . $phrase . '%')
-                  ->orWhere ('original_name', 'LIKE', '%' . $phrase . '%')
-                  ->orWhere ('path', 'LIKE', '%' . $phrase . '%');
+                ->orWhere ('size', 'LIKE', '%' . $phrase . '%')
+                ->orWhere ('original_name', 'LIKE', '%' . $phrase . '%')
+                ->orWhere ('path', 'LIKE', '%' . $phrase . '%');
         });
     }
 }
