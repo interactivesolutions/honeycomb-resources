@@ -11,10 +11,10 @@ class AddChecksumFieldToResourceTable extends Migration
      *
      * @return void
      */
-    public function up ()
+    public function up()
     {
-        Schema::table ('hc_resources', function (Blueprint $table) {
-            $table->string ('checksum', 64)->nullable();
+        Schema::table('hc_resources', function(Blueprint $table) {
+            $table->string('checksum', 64)->nullable();
         });
     }
 
@@ -23,10 +23,10 @@ class AddChecksumFieldToResourceTable extends Migration
      *
      * @return void
      */
-    public function down ()
+    public function down()
     {
-        Schema::table ('hc_resources', function (Blueprint $table) {
-            $table->dropColumn ('checksum');
+        Schema::table('hc_resources', function(Blueprint $table) {
+            $table->dropColumn('checksum');
         });
     }
 }

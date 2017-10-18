@@ -2,7 +2,8 @@
 
 namespace interactivesolutions\honeycombresources\app\validators;
 
-use interactivesolutions\honeycombcore\http\controllers\HCCoreFormValidator;
+
+use InteractiveSolutions\HoneycombCore\Http\Controllers\HCCoreFormValidator;
 
 class HCResourcesValidator extends HCCoreFormValidator
 {
@@ -15,7 +16,7 @@ class HCResourcesValidator extends HCCoreFormValidator
     {
         return [
             'original_name' => 'required',
-            'safe_name'     => 'required',
+            'safe_name' => 'required',
         ];
     }
 }

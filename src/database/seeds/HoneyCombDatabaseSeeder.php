@@ -1,4 +1,5 @@
 <?php
+
 namespace interactivesolutions\honeycombresources\database\seeds;
 
 use Illuminate\Database\Seeder;
@@ -10,7 +11,7 @@ class HoneyCombDatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run ()
+    public function run()
     {
 
     }

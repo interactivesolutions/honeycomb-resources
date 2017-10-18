@@ -1,6 +1,7 @@
 <?php namespace interactivesolutions\honeycombresources\app\validators\resources;
 
-use interactivesolutions\honeycombcore\http\controllers\HCCoreFormValidator;
+
+use InteractiveSolutions\HoneycombCore\Http\Controllers\HCCoreFormValidator;
 
 class HCThumbsValidator extends HCCoreFormValidator
 {
@@ -9,11 +10,11 @@ class HCThumbsValidator extends HCCoreFormValidator
      *
      * @return array
      */
-    protected function rules ()
+    protected function rules()
     {
         return [
-            'name'   => 'required',
-            'width'  => 'numeric|required',
+            'name' => 'required',
+            'width' => 'numeric|required',
             'height' => 'numeric|required',
 
         ];

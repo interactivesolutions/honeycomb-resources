@@ -10,13 +10,15 @@ class CalculateChecksumForExistingResources extends Migration
      *
      * @return void
      */
-    public function up ()
+    public function up()
     {
-        $list = HCResources::get ();
+        $list = HCResources::get();
 
-        foreach ($list as $resource)
-            if ($resource->size <= env ('MAX_CHECKSUM_SIZE', 102400000))
-                $resource->update (['checksum' => hash_file ('sha256', storage_path ('app/' . $resource->path))]);
+        foreach ($list as $resource) {
+            if ($resource->size <= env('MAX_CHECKSUM_SIZE', 102400000)) {
+                $resource->update(['checksum' => hash_file('sha256', storage_path('app/' . $resource->path))]);
+            }
+        }
     }
 
     /**
@@ -24,11 +26,12 @@ class CalculateChecksumForExistingResources extends Migration
      *
      * @return void
      */
-    public function down ()
+    public function down()
     {
-        $list = HCResources::get ();
+        $list = HCResources::get();
 
-        foreach ($list as $resource)
-            $resource->update (['checksum' => '']);
+        foreach ($list as $resource) {
+            $resource->update(['checksum' => '']);
+        }
     }
 }

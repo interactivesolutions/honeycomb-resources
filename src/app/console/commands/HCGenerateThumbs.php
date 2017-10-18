@@ -2,7 +2,7 @@
 
 namespace interactivesolutions\honeycombresources\app\console\commands;
 
-use interactivesolutions\honeycombcore\commands\HCCommand;
+use InteractiveSolutions\HoneycombCore\Console\HCCommand;
 use interactivesolutions\honeycombresources\app\helpers\HCImageThumbs;
 use interactivesolutions\honeycombresources\app\models\HCResources;
 use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
@@ -33,18 +33,19 @@ class HCGenerateThumbs extends HCCommand
         $id = $this->argument('id');
         $rule = $this->argument('rule');
 
-        if( $id && $rule ) {
+        if ($id && $rule) {
             $this->generateThumbByRule($id, $rule);
         } else {
-            if( $id ) {
+            if ($id) {
                 $this->generateGlobalThumb($id);
             } else {
 
-                if( $this->confirm('Are you sure you want to generate thumbs for all resources?') ) {
+                if ($this->confirm('Are you sure you want to generate thumbs for all resources?')) {
                     $list = HCResources::all()->pluck('id');
 
-                    foreach ( $list as $id )
+                    foreach ($list as $id) {
                         $this->generateGlobalThumb($id);
+                    }
                 }
             }
         }
@@ -60,20 +61,24 @@ class HCGenerateThumbs extends HCCommand
     {
         $resource = HCResources::find($id);
 
-        if( ! file_exists(storage_path('app/') . $resource->path) )
+        if (!file_exists(storage_path('app/') . $resource->path)) {
             return;
+        }
 
-        if( strpos($resource->mime_type, 'image') === false || strpos($resource->mime_type, 'svg') !== false )
+        if (strpos($resource->mime_type, 'image') === false || strpos($resource->mime_type, 'svg') !== false) {
             return;
+        }
 
-        if( ! $resource )
+        if (!$resource) {
             throw new \Exception('Resource not found: ' . $id);
+        }
 
         $thumbRules = HCThumbs::where('global', 1)->get();
         $dest = implode('/', str_split(str_pad($resource->count, 9, '0', STR_PAD_LEFT), 3)) . '/';
 
-        foreach ( $thumbRules as $rule ) {
-            $destination = generateResourcePublicLocation($dest, $rule->width, $rule->height, $rule->fit) . $resource->extension;
+        foreach ($thumbRules as $rule) {
+            $destination = generateResourcePublicLocation($dest, $rule->width, $rule->height,
+                    $rule->fit) . $resource->extension;
             createImage(storage_path('app/') . $resource->path, $destination, $rule->width, $rule->height, $rule->fit);
         }
     }

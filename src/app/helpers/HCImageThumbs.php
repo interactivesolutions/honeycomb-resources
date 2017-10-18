@@ -36,7 +36,7 @@ class HCImageThumbs
 
         $file = $this->getOriginalFile($resource);
 
-        if( $file ) {
+        if ($file) {
             $image = $this->resizeImage($file, $setting);
 //            $image = $this->addWatermark($image, $setting);
             $image->encode('jpg', $quality);
@@ -51,8 +51,9 @@ class HCImageThumbs
      */
     protected function createThumbsFolder($path)
     {
-        if( ! File::exists($path) )
+        if (!File::exists($path)) {
             File::makeDirectory($path, 0775, true);
+        }
     }
 
     /**
@@ -77,10 +78,12 @@ class HCImageThumbs
         $file = null;
         $path = storage_path('app/' . $resource->path);
 
-        if( ! File::exists($path) ) {
+        if (!File::exists($path)) {
             HCLog::error('R-THUMB-001', 'File not found at path: ' . $path);
-        } else if( $resource->isImage() || strpos($resource->mime_type, 'svg') !== false ) {
-            $file = File::get($path);
+        } else {
+            if ($resource->isImage() || strpos($resource->mime_type, 'svg') !== false) {
+                $file = File::get($path);
+            }
         }
 
         return $file;
@@ -97,12 +100,12 @@ class HCImageThumbs
     {
         $image = ImageManagerStatic::make($file);
 
-        if( $setting->fit === "1" ) {
-            $image->fit($setting->width, $setting->height, function ($constraint) use ($setting) {
+        if ($setting->fit === "1") {
+            $image->fit($setting->width, $setting->height, function($constraint) use ($setting) {
                 $constraint->upsize();
             });
         } else {
-            $image->resize($setting->width, $setting->height, function ($constraint) use ($setting) {
+            $image->resize($setting->width, $setting->height, function($constraint) use ($setting) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
@@ -228,7 +231,7 @@ class HCImageThumbs
     {
         $name = getThumbName($setting);
 
-        $this->thumbsFolder  = storage_path('app/public/thumbs/' . $name . DIRECTORY_SEPARATOR);
+        $this->thumbsFolder = storage_path('app/public/thumbs/' . $name . DIRECTORY_SEPARATOR);
 
         $this->createThumbsFolder($this->thumbsFolder);
     }

@@ -11,18 +11,18 @@ class CreateHcResourcesTable extends Migration
      *
      * @return void
      */
-    public function up ()
+    public function up()
     {
-        Schema::create ('hc_resources', function (Blueprint $table) {
-            $table->integer ('count', true);
-            $table->string ('id', 36)->unique ('id');
-            $table->timestamps ();
-            $table->softDeletes ();
-            $table->string ('original_name');
-            $table->string ('mime_type', 100);
-            $table->string ('extension', 100);
-            $table->integer ('size');
-            $table->text ('path');
+        Schema::create('hc_resources', function(Blueprint $table) {
+            $table->integer('count', true);
+            $table->string('id', 36)->unique('id');
+            $table->timestamps();
+            $table->softDeletes();
+            $table->string('original_name');
+            $table->string('mime_type', 100);
+            $table->string('extension', 100);
+            $table->integer('size');
+            $table->text('path');
         });
     }
 
@@ -32,9 +32,9 @@ class CreateHcResourcesTable extends Migration
      *
      * @return void
      */
-    public function down ()
+    public function down()
     {
-        Schema::drop ('hc_resources');
+        Schema::drop('hc_resources');
     }
 
 }

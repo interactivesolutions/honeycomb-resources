@@ -2,16 +2,16 @@
 
 namespace interactivesolutions\honeycombresources\app\providers;
 
-use interactivesolutions\honeycombcore\providers\HCBaseServiceProvider;
+use InteractiveSolutions\HoneycombCore\Providers\HCBaseServiceProvider;
 use interactivesolutions\honeycombresources\app\console\commands\HCGenerateThumbs;
 use Intervention\Image\ImageServiceProvider;
 
 class HCResourcesServiceProvider extends HCBaseServiceProvider
 {
     protected $homeDirectory = __DIR__;
-    
+
     protected $commands = [
-        HCGenerateThumbs::class
+        HCGenerateThumbs::class,
     ];
 
     protected $namespace = 'interactivesolutions\honeycombresources\app\http\controllers';
@@ -22,9 +22,9 @@ class HCResourcesServiceProvider extends HCBaseServiceProvider
     /**
      * Registering external providers
      */
-    protected function registerProviders ()
+    protected function registerProviders()
     {
-        $this->app->register (ImageServiceProvider::class);
+        $this->app->register(ImageServiceProvider::class);
     }
 }
 

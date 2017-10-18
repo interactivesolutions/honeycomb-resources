@@ -5,7 +5,7 @@ use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic as Image;
 
-if( ! function_exists('generateResourceCacheLocation') ) {
+if (!function_exists('generateResourceCacheLocation')) {
 
     /**
      * Generating resource cache location and name
@@ -20,19 +20,21 @@ if( ! function_exists('generateResourceCacheLocation') ) {
     {
         $path = storage_path('app/') . 'cache/' . str_replace('-', '/', $id) . '/';
 
-        if( ! is_dir($path) )
+        if (!is_dir($path)) {
             mkdir($path, 0755, true);
+        }
 
         $path .= $width . '_' . $height;
 
-        if( $fit )
+        if ($fit) {
             $path .= '_fit';
+        }
 
         return $path;
     }
 }
 
-if( ! function_exists('generateResourcePublicLocation') ) {
+if (!function_exists('generateResourcePublicLocation')) {
     /**
      * Generating resource public location and name
      *
@@ -46,19 +48,21 @@ if( ! function_exists('generateResourcePublicLocation') ) {
     {
         $path = public_path('thumbs/') . str_replace('-', '/', $id) . '/';
 
-        if( ! is_dir($path) )
+        if (!is_dir($path)) {
             mkdir($path, 0755, true);
+        }
 
         $path .= $width . '_' . $height;
 
-        if( $fit )
+        if ($fit) {
             $path .= '_fit';
+        }
 
         return $path;
     }
 }
 
-if( ! function_exists('getThumbUrl') ) {
+if (!function_exists('getThumbUrl')) {
     /**
      * Get public url of resource id and thumb
      *
@@ -74,7 +78,7 @@ if( ! function_exists('getThumbUrl') ) {
     }
 }
 
-if( ! function_exists('getThumbName') ) {
+if (!function_exists('getThumbName')) {
 
     /**
      * Get thumb name by given thumb instance
@@ -86,7 +90,7 @@ if( ! function_exists('getThumbName') ) {
     {
         $name = sprintf("%s_%s", $thumb->width, $thumb->height);
 
-        if( $thumb->fit ) {
+        if ($thumb->fit) {
             $name .= '_fit';
         }
 
@@ -94,7 +98,7 @@ if( ! function_exists('getThumbName') ) {
     }
 }
 
-if( ! function_exists('createImage') ) {
+if (!function_exists('createImage')) {
     /**
      * Creating image based on provided data
      *
@@ -107,23 +111,26 @@ if( ! function_exists('createImage') ) {
      */
     function createImage($source, $destination, $width = 0, $height = 0, $fit = false)
     {
-        if( $width == 0 )
+        if ($width == 0) {
             $width = null;
+        }
 
-        if( $height == 0 )
+        if ($height == 0) {
             $height = null;
+        }
 
         $image = Image::make($source);
 
-        if( $fit )
-            $image->fit($width, $height, function (Constraint $constraint) {
+        if ($fit) {
+            $image->fit($width, $height, function(Constraint $constraint) {
                 $constraint->upsize();
             });
-        else
-            $image->resize($width, $height, function (Constraint $constraint) {
+        } else {
+            $image->resize($width, $height, function(Constraint $constraint) {
                 $constraint->upsize();
                 $constraint->aspectRatio();
             });
+        }
 
         $image->save($destination);
 
@@ -131,7 +138,7 @@ if( ! function_exists('createImage') ) {
     }
 }
 
-if( ! function_exists('getResourceOriginalName') ) {
+if (!function_exists('getResourceOriginalName')) {
     /**
      * Getting resource name
      *

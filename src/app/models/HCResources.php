@@ -2,7 +2,7 @@
 
 namespace interactivesolutions\honeycombresources\app\models;
 
-use interactivesolutions\honeycombcore\models\HCUuidModel;
+use InteractiveSolutions\HoneycombCore\Models\HCUuidModel;
 use interactivesolutions\honeycombresources\app\models\resources\HCThumbs;
 
 class HCResources extends HCUuidModel
