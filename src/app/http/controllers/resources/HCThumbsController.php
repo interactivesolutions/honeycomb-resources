@@ -226,7 +226,7 @@ class HCThumbsController extends HCBaseController
      * @param string $phrase
      * @return mixed
      */
-    protected function searchQuery(Builder $list, string $phrase)
+    protected function searchQuery(Builder $list, string $phrase): Builder
     {
         return $list->where(function($query) use ($phrase) {
             $query->where('name', 'LIKE', '%' . $phrase . '%')
