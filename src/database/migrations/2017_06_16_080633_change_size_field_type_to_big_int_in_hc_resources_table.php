@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+/**
+ * Class ChangeSizeFieldTypeToBigIntInHcResourcesTable
+ */
 class ChangeSizeFieldTypeToBigIntInHcResourcesTable extends Migration
 {
     /**
@@ -11,9 +16,11 @@ class ChangeSizeFieldTypeToBigIntInHcResourcesTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        \DB::statement("ALTER TABLE `hc_resources` CHANGE `size` `size` BIGINT(20) NOT NULL;");
+        Schema::table('hc_resources', function (Blueprint $table) {
+            $table->bigInteger('size')->change();
+        });
     }
 
     /**
@@ -21,8 +28,10 @@ class ChangeSizeFieldTypeToBigIntInHcResourcesTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        \DB::statement("ALTER TABLE `hc_resources` CHANGE `size` `size` INT(11) NOT NULL;");
+        Schema::table('hc_resources', function (Blueprint $table) {
+            $table->integer('size')->change();
+        });
     }
 }
